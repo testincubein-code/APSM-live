@@ -232,11 +232,7 @@ export const parseCountryData = (snapshot) => {
       .map((c) => {
         if (!c) return null;
         return {
-<<<<<<< HEAD
-          country: c.name || "Unknown",
-=======
           country: formatCountryName(c.name),
->>>>>>> origin/main
           views: parseInt(c.count) || 0,
         };
       })
@@ -258,11 +254,7 @@ export const parseCountryData = (snapshot) => {
     .map((row) => {
       if (!Array.isArray(row)) return null;
       return {
-<<<<<<< HEAD
-        country: row[colMap["country"]] || "Unknown",
-=======
         country: formatCountryName(row[colMap["country"]]),
->>>>>>> origin/main
         views: parseInt(row[colMap["views"]]) || 0,
       };
     })

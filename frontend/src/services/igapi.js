@@ -3,17 +3,6 @@ import api from "./api";
 // ── Cache management and fetch wrapper ────────────────────────────────
 let snapshotCache = null;
 let cacheTime = null;
-<<<<<<< HEAD
-
-const getCachedSnapshot = async () => {
-  if (snapshotCache && cacheTime && (Date.now() - cacheTime < 5000)) {
-    return snapshotCache;
-  }
-  try {
-    const response = await api.get("/analytics/instagram");
-    snapshotCache = response.data?.data || null;
-    cacheTime = Date.now();
-=======
 let cacheToken = null;
 
 const getCachedSnapshot = async (forceRefresh = false) => {
@@ -31,7 +20,6 @@ const getCachedSnapshot = async (forceRefresh = false) => {
     }
     cacheTime = Date.now();
     cacheToken = currentToken;
->>>>>>> origin/main
     return snapshotCache;
   } catch (err) {
     console.warn("Failed to fetch Instagram analytics from API:", err.message);
@@ -39,13 +27,8 @@ const getCachedSnapshot = async (forceRefresh = false) => {
   }
 };
 
-<<<<<<< HEAD
-const getIgSnapshotData = async () => {
-  const snapshot = await getCachedSnapshot();
-=======
 const getIgSnapshotData = async (forceRefresh = false) => {
   const snapshot = await getCachedSnapshot(forceRefresh);
->>>>>>> origin/main
   return snapshot || {};
 };
 
@@ -82,13 +65,8 @@ const igapi = {
     }
   },
 
-<<<<<<< HEAD
-  getOverviewMetrics: async () => {
-    const data = await getIgSnapshotData();
-=======
   getOverviewMetrics: async (forceRefresh = false) => {
     const data = await getIgSnapshotData(forceRefresh);
->>>>>>> origin/main
     
     const metrics = data.metrics || {};
     const demographics = data.demographics || {};
@@ -123,9 +101,6 @@ const igapi = {
       });
     }
     
-<<<<<<< HEAD
-    const followerGrowth = data.followerGrowth || [];
-=======
     const history = data.history || [];
     let followerGrowth = [];
     if (history.length > 0) {
@@ -142,7 +117,6 @@ const igapi = {
         };
       });
     }
->>>>>>> origin/main
     
     const engagementTrend = reachTrend.map(r => ({
       date: r.date,
@@ -168,28 +142,16 @@ const igapi = {
       value: Math.round(val / totalAge * 100)
     }));
     
-<<<<<<< HEAD
-    const topCountries = (demographics.topCountries || []).map(c => ({
-=======
     let topCountries = (demographics.topCountries || []).map(c => ({
->>>>>>> origin/main
       name: c.name,
       value: c.count
     }));
     
-<<<<<<< HEAD
-    const topCities = (demographics.topCities || []).map(c => ({
-      name: c.name,
-      value: c.count
-    }));
-    
-=======
     let topCities = (demographics.topCities || []).map(c => ({
       name: c.name,
       value: c.count
     }));
 
->>>>>>> origin/main
     const audience = {
       topCities,
       topCountries,
@@ -200,10 +162,6 @@ const igapi = {
       ]
     };
     
-<<<<<<< HEAD
-    const contentPerformance = data.contentPerformance || [];
-    const topReels = data.topReels || [];
-=======
     const rawMedia = ig.media || [];
     const formattedMedia = rawMedia.map(m => {
       const type = m.media_type === "VIDEO" ? "Reel" : (m.media_type === "CAROUSEL_ALBUM" ? "Carousel" : "Post");
@@ -229,7 +187,6 @@ const igapi = {
 
     const contentPerformance = formattedMedia;
     const topReels = formattedMedia.filter(m => m.type === "Reel");
->>>>>>> origin/main
     
     return {
       kpis,
@@ -246,16 +203,6 @@ const igapi = {
   },
 
   getMetricHistory: async (metricId) => {
-<<<<<<< HEAD
-    return { metricId, history: [] };
-  },
-
-  getContent: async () => {
-    const data = await getIgSnapshotData();
-    return {
-      posts: data.contentPerformance || []
-    };
-=======
     const data = await getIgSnapshotData();
     const history = data.history || [];
     const metricHistory = history.map(snap => {
@@ -278,7 +225,6 @@ const igapi = {
   getContent: async () => {
     const ov = await igapi.getOverviewMetrics();
     return { posts: ov.contentPerformance || [] };
->>>>>>> origin/main
   },
 
   getAudience: async () => {
@@ -304,20 +250,12 @@ const igapi = {
       value: Math.round(val / totalAge * 100)
     }));
     
-<<<<<<< HEAD
-    const topCountries = (demographics.topCountries || []).map(c => ({
-=======
     let topCountries = (demographics.topCountries || []).map(c => ({
->>>>>>> origin/main
       name: c.name,
       value: c.count
     }));
     
-<<<<<<< HEAD
-    const topCities = (demographics.topCities || []).map(c => ({
-=======
     let topCities = (demographics.topCities || []).map(c => ({
->>>>>>> origin/main
       name: c.name,
       value: c.count
     }));
@@ -340,23 +278,6 @@ const igapi = {
     const data = await getIgSnapshotData();
     const metrics = data.metrics || {};
     const ig = data.rawPlatformData?.instagram || {};
-<<<<<<< HEAD
-    
-    const insights = ig.insights || [];
-    const reachMetric = insights.find(m => m.name === 'reach')?.values || [];
-    
-    const trend = reachMetric.map((v, i) => ({
-      date: v.end_time?.split('T')[0] || `Day ${i + 1}`,
-      rate: v.value ? (Math.random() * 3 + 2).toFixed(1) : 0
-    }));
-
-    return {
-      interactions: [
-        { name: 'Likes', value: Math.round((metrics.totalEngagement || 0) * 0.7) },
-        { name: 'Comments', value: Math.round((metrics.totalEngagement || 0) * 0.2) },
-        { name: 'Shares', value: 0 },
-        { name: 'Saves', value: Math.round((metrics.totalEngagement || 0) * 0.1) }
-=======
     const rawMedia = ig.media || [];
     
     const totalLikes = rawMedia.reduce((sum, m) => sum + (m.like_count || 0), 0);
@@ -393,19 +314,12 @@ const igapi = {
         { name: 'Comments', value: totalComments || Math.round((metrics.totalEngagement || 0) * 0.2) },
         { name: 'Shares', value: 0 },
         { name: 'Saves', value: Math.round((totalEngagementFromMedia || metrics.totalEngagement || 0) * 0.1) }
->>>>>>> origin/main
       ],
       trend
     };
   },
 
   getStories: async () => { return { items: [] }; },
-<<<<<<< HEAD
-  getReels: async () => { return { items: [] }; },
-  getGrowth: async () => { return { history: [] }; },
-  getHashtags: async () => { return { tags: [] }; },
-  getInsights: async () => { return { actions: [] }; },
-=======
   getReels: async () => { 
     const ov = await igapi.getOverviewMetrics();
     return { items: ov.topReels || [] };
@@ -434,7 +348,6 @@ const igapi = {
     const response = await api.delete("/auth/instagram/revoke");
     return response.data;
   },
->>>>>>> origin/main
 };
 
 export default igapi;

@@ -2,19 +2,6 @@ import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-<<<<<<< HEAD
-import { Download, FileText, Calendar, Filter } from 'lucide-react';
-
-const InstagramReports = () => {
-  const { isConnected } = useOutletContext();
-  const [isExporting, setIsExporting] = useState(false);
-
-  const handleExport = () => {
-    setIsExporting(true);
-    setTimeout(() => {
-      setIsExporting(false);
-    }, 1500);
-=======
 import { Download, FileText, Filter } from 'lucide-react';
 import DateRangePicker from '@/components/DateRangePicker';
 import reportApi from '@/services/reportApi';
@@ -43,7 +30,6 @@ const InstagramReports = () => {
       setIsExportingPdf(false);
       setIsExportingCsv(false);
     }
->>>>>>> origin/main
   };
 
   if (!isConnected) {
@@ -74,14 +60,6 @@ const InstagramReports = () => {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-300 mb-1 block">Date Range</label>
-<<<<<<< HEAD
-                <div className="flex items-center gap-2 p-2 border border-white/10 rounded-lg bg-black/20">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-300">Last 30 Days</span>
-                </div>
-              </div>
-
-=======
                 <div className="flex items-center gap-2 p-1 border border-white/10 rounded-lg bg-black/20">
                   <DateRangePicker 
                     startDate={dateRange.start} 
@@ -91,7 +69,6 @@ const InstagramReports = () => {
                 </div>
               </div>
               
->>>>>>> origin/main
               <div>
                 <label className="text-sm font-medium text-gray-300 mb-1 block">Metrics to Include</label>
                 <div className="flex items-center gap-2 p-2 border border-white/10 rounded-lg bg-black/20">
@@ -102,24 +79,6 @@ const InstagramReports = () => {
             </div>
 
             <div className="flex gap-3">
-<<<<<<< HEAD
-              <Button
-                onClick={handleExport}
-                disabled={isExporting}
-                className="flex-1 bg-[#E1306C] hover:bg-[#E1306C]/90 text-white"
-              >
-                {isExporting ? 'Generating...' : 'Export as PDF'}
-                {!isExporting && <FileText className="w-4 h-4 ml-2" />}
-              </Button>
-              <Button
-                onClick={handleExport}
-                disabled={isExporting}
-                variant="outline"
-                className="flex-1 border-gray-300 text-black hover:bg-gray-100 dark:border-white/10 dark:text-white dark:hover:bg-white/5"
-              >
-                {isExporting ? 'Generating...' : 'Export CSV'}
-                {!isExporting && <Download className="w-4 h-4 ml-2" />}
-=======
               <Button 
                 onClick={() => handleExport('pdf')}
                 disabled={isExportingPdf || isExportingCsv}
@@ -136,7 +95,6 @@ const InstagramReports = () => {
               >
                 {isExportingCsv ? 'Generating CSV...' : 'Export CSV'}
                 {!isExportingCsv && <Download className="w-4 h-4 ml-2" />}
->>>>>>> origin/main
               </Button>
             </div>
           </CardContent>

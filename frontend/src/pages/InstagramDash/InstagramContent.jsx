@@ -35,9 +35,6 @@ const InstagramContent = () => {
     return () => { isMounted = false; };
   }, [isConnected]);
 
-<<<<<<< HEAD
-  const filters = ['All', 'Images', 'Carousels', 'Videos', 'Reels'];
-=======
   const filters = ['All', 'Posts', 'Reels'];
 
   const filteredPosts = data?.posts?.filter(p => {
@@ -46,7 +43,6 @@ const InstagramContent = () => {
     if (filter === 'Posts') return p.type === 'Post' || p.type === 'Carousel' || p.type === 'IMAGE' || p.type === 'CAROUSEL_ALBUM';
     return true;
   }) || [];
->>>>>>> origin/main
 
   if (!isConnected) {
     return (
@@ -95,27 +91,16 @@ const InstagramContent = () => {
             </Card>
           ))}
         </div>
-<<<<<<< HEAD
-      ) : data.posts.length === 0 ? (
-=======
       ) : filteredPosts.length === 0 ? (
->>>>>>> origin/main
         <div className="p-12 text-center border border-white/5 rounded-xl bg-[#161B22]/90 backdrop-blur-md rounded-xl">
           <p className="text-gray-400">Not enough data available yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<<<<<<< HEAD
-          {data.posts.map((post) => (
-            <Card key={post.id} className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors">
-              <div className="relative h-48">
-                <img src={post.thumbnail} alt={post.type} className="w-full h-full object-cover" />
-=======
           {filteredPosts.map((post) => (
             <Card key={post.id} className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors">
               <div className="relative h-48">
                 <img src={post.image} alt={post.type} className="w-full h-full object-cover" />
->>>>>>> origin/main
                 <span className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-xs text-white px-2 py-1 rounded-md font-medium border border-white/10">
                   {post.type}
                 </span>
@@ -124,11 +109,7 @@ const InstagramContent = () => {
                 <div className="flex justify-between items-center mb-4 text-gray-400 text-sm">
                   <span>Reach: <strong className="text-white">{formatNumber(post.reach)}</strong></span>
                   <span className="text-[#E1306C] font-semibold">
-<<<<<<< HEAD
-                    {((post.likes + post.comments) / post.reach * 100).toFixed(1)}% ER
-=======
                     {post.reach ? ((post.likes + post.comments) / post.reach * 100).toFixed(1) + '% ER' : 'N/A'}
->>>>>>> origin/main
                   </span>
                 </div>
                 

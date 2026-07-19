@@ -112,16 +112,11 @@ const FacebookLayout = () => {
   // ── Loading state (checking connection) ───────────────────────────
   if (isLayoutLoading) {
     return (
-<<<<<<< HEAD
-      <div className="flex min-h-[60vh] items-center justify-center bg-[#0B1121] text-white">
-        <div className="relative w-12 h-12">
-=======
       <div className="flex min-h-[60vh] items-center justify-center bg-background text-white relative overflow-hidden">
         {/* ── Background Gradient Orbs ──────────────────────────────────── */}
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
         <div className="relative w-12 h-12 z-10">
->>>>>>> origin/main
           <div className="absolute top-0 left-0 w-full h-full border-4 border-[#1877F2]/20 rounded-full" />
           <div className="absolute top-0 left-0 w-full h-full border-4 border-t-[#1877F2] rounded-full animate-spin" />
         </div>
@@ -131,17 +126,12 @@ const FacebookLayout = () => {
 
   if (!isConnected) {
     return (
-<<<<<<< HEAD
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-[#0B1121] -m-6 text-white p-6 animate-fade-in">
-        <ConnectCard
-=======
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-background -m-6 text-white p-6 animate-fade-in relative overflow-hidden">
         {/* ── Background Gradient Orbs ──────────────────────────────────── */}
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
         <div className="z-10 relative">
           <ConnectCard
->>>>>>> origin/main
           icon={
             <svg className="h-8 w-8 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -155,23 +145,16 @@ const FacebookLayout = () => {
           brandTextClass="text-[#1877F2]"
           brandButtonClass="bg-[#1877F2] hover:bg-[#1877F2]/90 text-white font-semibold"
         />
-<<<<<<< HEAD
-=======
         </div>
->>>>>>> origin/main
       </div>
     );
   }
 
   return (
-<<<<<<< HEAD
-    <div className="flex gap-0 -m-6 h-[calc(100vh-4rem)] bg-[#0B1121] text-white overflow-hidden relative">
-=======
     <div className="flex gap-0 -m-6 h-[calc(100vh-4rem)] bg-background text-white overflow-hidden relative">
       {/* ── Background Gradient Orbs ──────────────────────────────────── */}
       <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none z-0" />
       <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none z-0" />
->>>>>>> origin/main
 
       {/* ── Mobile Backdrop ───────────────────────────────────────────────── */}
       {isMobileOpen && (
@@ -187,11 +170,7 @@ const FacebookLayout = () => {
       <aside
         className={`
           fixed inset-y-0 left-0 z-50 flex flex-col border-r border-white/10
-<<<<<<< HEAD
-          bg-[#0B1121]/95 backdrop-blur-xl lg:bg-[#0B1121] lg:backdrop-blur-none
-=======
           bg-background/95 backdrop-blur-xl lg:bg-background lg:backdrop-blur-none
->>>>>>> origin/main
           transition-all duration-300 ease-in-out
           lg:static lg:translate-x-0
           ${isMobileOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"}
@@ -290,11 +269,7 @@ const FacebookLayout = () => {
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
 
         {/* ── Mobile Header Toggle ───────────────────────────────────── */}
-<<<<<<< HEAD
-        <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-[#0B1121]">
-=======
         <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-background/80 backdrop-blur-md relative z-10">
->>>>>>> origin/main
           <button
             onClick={() => setIsMobileOpen(true)}
             className="text-gray-400 hover:text-[#1877F2] transition-colors"
@@ -306,11 +281,7 @@ const FacebookLayout = () => {
 
         {/* ── Scrollable Outlet Area ────────────────────────────────────── */}
         {/* Passes layout context to all child pages via Outlet context */}
-<<<<<<< HEAD
-        <main className="flex-1 overflow-y-auto">
-=======
         <main className="flex-1 overflow-y-auto relative z-10">
->>>>>>> origin/main
           <Outlet
             context={{
               profile,

@@ -44,11 +44,7 @@ const InstagramReels = () => {
     );
   }
 
-<<<<<<< HEAD
-  const totalPlays = data ? data.items.reduce((a, b) => a + b.plays, 0) : 0;
-=======
   const totalPlays = data ? data.items.reduce((a, b) => a + (b.plays || b.views || 0), 0) : 0;
->>>>>>> origin/main
 
   return (
     <div className="p-4 md:p-8 space-y-8 w-full max-w-7xl mx-auto">
@@ -86,17 +82,6 @@ const InstagramReels = () => {
             {data.items.map((reel) => (
               <Card key={reel.id} className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 overflow-hidden group hover:border-white/10 transition-all shadow-sm">
                 <div className="relative h-72 w-full">
-<<<<<<< HEAD
-                  <img src={reel.image} alt={reel.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B1121] via-transparent to-transparent"></div>
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md">
-                    <PlaySquare className="w-3 h-3 text-white" />
-                    <span className="text-white text-xs font-semibold">{formatNumber(reel.plays)}</span>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="text-white font-medium text-sm line-clamp-2 mb-3">{reel.title}</h3>
-=======
                   <img src={reel.image} alt={reel.caption} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B1121] via-transparent to-transparent"></div>
                   <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md">
@@ -106,7 +91,6 @@ const InstagramReels = () => {
                 </div>
                 <CardContent className="p-4">
                   <h3 className="text-white font-medium text-sm line-clamp-2 mb-3">{reel.caption || "Reel"}</h3>
->>>>>>> origin/main
                   <div className="grid grid-cols-4 gap-1 border-t border-white/5 pt-3">
                     <div className="flex flex-col items-center">
                       <Heart className="w-3 h-3 text-gray-500 mb-1" />

@@ -29,8 +29,6 @@ const crosspostApi = {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
-<<<<<<< HEAD
-=======
   },
 
   /**
@@ -48,7 +46,6 @@ const crosspostApi = {
   revokeAccess: async (platformId) => {
     const response = await api.delete(`/auth/${platformId}/revoke`);
     return response.data;
->>>>>>> origin/main
   }
 };
 

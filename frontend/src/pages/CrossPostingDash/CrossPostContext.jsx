@@ -42,8 +42,6 @@ export function CrossPostProvider({ children }) {
           description: "Failed to load connected platforms",
           variant: "destructive"
         });
-<<<<<<< HEAD
-=======
       }
 
       try {
@@ -51,7 +49,6 @@ export function CrossPostProvider({ children }) {
         if (mounted) setPostHistory(history);
       } catch (err) {
         console.error("Failed to fetch post history", err);
->>>>>>> origin/main
       } finally {
         if (mounted) setIsLoadingAuth(false);
       }

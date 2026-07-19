@@ -26,11 +26,7 @@ const CustomSwitch = ({ checked, onChange }) => (
   </button>
 );
 
-<<<<<<< HEAD
-import metaApi from '@/services/metaApi';
-=======
 import igapi from '@/services/igapi';
->>>>>>> origin/main
 import ConfirmDisconnectModal from "@/components/ConfirmDisconnectModal";
 
 export default function InstagramSettings() {
@@ -47,11 +43,7 @@ export default function InstagramSettings() {
 
   const executeDisconnect = async () => {
     try {
-<<<<<<< HEAD
-      await metaApi.revokeInstagram();
-=======
       await igapi.revokeAccess();
->>>>>>> origin/main
       window.location.reload();
     } catch (error) {
       console.error("Failed to disconnect:", error);

@@ -4,14 +4,6 @@ import api from "./api";
 let snapshotCache = null;
 let cacheTime = null;
 
-<<<<<<< HEAD
-const getCachedSnapshot = async () => {
-  if (snapshotCache && cacheTime && (Date.now() - cacheTime < 5000)) {
-    return snapshotCache;
-  }
-  try {
-    const response = await api.get("/analytics/facebook");
-=======
 const getCachedSnapshot = async (forceRefresh = false) => {
   if (!forceRefresh && snapshotCache && cacheTime && (Date.now() - cacheTime < 5000)) {
     return snapshotCache;
@@ -19,7 +11,6 @@ const getCachedSnapshot = async (forceRefresh = false) => {
   try {
     const url = forceRefresh ? "/analytics/meta/facebook?forceRefresh=true" : "/analytics/meta/facebook";
     const response = await api.get(url);
->>>>>>> origin/main
     snapshotCache = response.data?.data || null;
     cacheTime = Date.now();
     return snapshotCache;
@@ -29,13 +20,8 @@ const getCachedSnapshot = async (forceRefresh = false) => {
   }
 };
 
-<<<<<<< HEAD
-const getFbSnapshotData = async () => {
-  const snapshot = await getCachedSnapshot();
-=======
 const getFbSnapshotData = async (forceRefresh = false) => {
   const snapshot = await getCachedSnapshot(forceRefresh);
->>>>>>> origin/main
   return snapshot || {};
 };
 
@@ -69,16 +55,6 @@ const fbapi = {
       const statusArr = res.data?.status ?? [];
       const fbStatus = statusArr.find((s) => s.platform === "facebook");
       const isConnected = !!(fbStatus?.connected && !fbStatus?.isExpired);
-<<<<<<< HEAD
-      
-      if (!isConnected) {
-        return { isConnected: false, profile: null };
-      }
-      
-      const data = await getFbSnapshotData();
-      const fb = data.rawPlatformData?.facebook || {};
-      
-=======
 
       if (!isConnected) {
         return { isConnected: false, profile: null };
@@ -87,7 +63,6 @@ const fbapi = {
       const data = await getFbSnapshotData();
       const fb = data.rawPlatformData?.facebook || {};
 
->>>>>>> origin/main
       return {
         isConnected,
         profile: {
@@ -99,11 +74,7 @@ const fbapi = {
           pageLikes: data.metrics?.followers || fb.fanCount || 0,
           followers: data.metrics?.followers || 0,
           reach: data.metrics?.reach || 0,
-<<<<<<< HEAD
-          totalPosts: (data.extended?.contentData?.posts?.length || 0) + (data.extended?.contentData?.videos?.length || 0),
-=======
           totalPosts: fb.posts?.length || 0,
->>>>>>> origin/main
         },
       };
     } catch (err) {
@@ -112,13 +83,8 @@ const fbapi = {
     }
   },
 
-<<<<<<< HEAD
-  getOverviewMetrics: async (dateRange = null) => {
-    const fb = await getFbSnapshotData();
-=======
   getOverviewMetrics: async (dateRange = null, forceRefresh = false) => {
     const fb = await getFbSnapshotData(forceRefresh);
->>>>>>> origin/main
     const insights = fb.rawPlatformData?.facebook?.insights || [];
 
     const sumMetric = (name) =>
@@ -147,18 +113,6 @@ const fbapi = {
     const filteredEngRate = dateRange
       ? filterByDateRange(engagementRateData, dateRange)
       : engagementRateData;
-<<<<<<< HEAD
-    const avgEngRate =
-      filteredEngRate.length > 0
-        ? (
-            filteredEngRate.reduce((a, b) => a + b.rate, 0) /
-            filteredEngRate.length
-          ).toFixed(2) + "%"
-        : "N/A";
-
-    const allPosts = fb.extended?.contentData?.posts || [];
-    const allVideos = fb.extended?.contentData?.videos || [];
-=======
 
     const rawPosts = fb.rawPlatformData?.facebook?.posts || [];
     const followers = fb.metrics?.followers || fb.rawPlatformData?.facebook?.fanCount || 1;
@@ -194,7 +148,6 @@ const fbapi = {
 
     const allPosts = formattedPosts.filter(p => p.type !== "Videos");
     const allVideos = formattedPosts.filter(p => p.type === "Videos");
->>>>>>> origin/main
     const topPosts = dateRange
       ? filterByDateRange(allPosts, dateRange)
       : allPosts;
@@ -213,13 +166,6 @@ const fbapi = {
 
     let engagementsOverTime = chartSeries("page_post_engagements");
     if (engagementsOverTime.length === 0) {
-<<<<<<< HEAD
-      engagementsOverTime = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date();
-        d.setDate(d.getDate() - (6 - i));
-        return { date: d.toISOString().split("T")[0], value: 0 };
-      });
-=======
       const byDate = {};
       const dates = Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
@@ -234,28 +180,10 @@ const fbapi = {
         }
       });
       engagementsOverTime = Object.entries(byDate).map(([date, value]) => ({ date, value }));
->>>>>>> origin/main
     }
 
     let finalEngRateData = filteredEngRate;
     if (finalEngRateData.length === 0) {
-<<<<<<< HEAD
-      finalEngRateData = Array.from({ length: 7 }, (_, i) => {
-        const d = new Date();
-        d.setDate(d.getDate() - (6 - i));
-        return { date: d.toISOString().split("T")[0], rate: 0 };
-      });
-    }
-
-    return {
-      kpis: {
-        pageLikes:       { value: fb.metrics?.followers || 0,                            change: 0  },
-        postReach:       { value: fb.metrics?.reach || 0,                                change: 0  },
-        postEngagements: { value: fb.metrics?.totalEngagement || sumMetric("page_post_engagements"), change: 0 },
-        reactions:       { value: Math.round((fb.metrics?.totalEngagement || sumMetric("page_post_engagements")) * 0.6), change: 0 },
-        comments:        { value: Math.round((fb.metrics?.totalEngagement || sumMetric("page_post_engagements")) * 0.2), change: 0 },
-        shares:          { value: Math.round((fb.metrics?.totalEngagement || sumMetric("page_post_engagements")) * 0.2), change: 0 },
-=======
       const byDate = {};
       const dates = Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
@@ -296,17 +224,12 @@ const fbapi = {
         reactions: { value: totalPostLikes || Math.round((fb.metrics?.totalEngagement || sumMetric("page_post_engagements")) * 0.6), change: 0 },
         comments: { value: totalPostComments || Math.round((fb.metrics?.totalEngagement || sumMetric("page_post_engagements")) * 0.2), change: 0 },
         shares: { value: totalPostShares || Math.round((fb.metrics?.totalEngagement || sumMetric("page_post_engagements")) * 0.2), change: 0 },
->>>>>>> origin/main
       },
       charts: {
         reachOverTime,
         engagementsOverTime,
         engagementRate: {
-<<<<<<< HEAD
-          rate: avgEngRate !== "N/A" ? avgEngRate : "0%",
-=======
           rate: avgEngRate,
->>>>>>> origin/main
           change: 0,
           data: finalEngRateData,
         },
@@ -335,27 +258,6 @@ const fbapi = {
     const fb = await getFbSnapshotData();
     const demographics = fb.demographics || {};
     const details = fb.extended?.audienceDetails || {};
-<<<<<<< HEAD
-    
-    return {
-      totalGrowth: details.totalGrowth || "",
-      ageAndGender: demographics.ageAndGender?.length > 0 
-        ? demographics.ageAndGender.map(a => ({ group: a.group, value: a.count }))
-        : [],
-      topLocations: demographics.topCountries?.length > 0
-        ? demographics.topCountries.map(c => ({ name: c.name, value: c.count }))
-        : [],
-      topInterests: details.topInterests || [],
-    };
-  },
-
-  getEngagementMetrics: async () => {
-    const fb = await getFbSnapshotData();
-    const details = fb.extended?.engagementDetails || {};
-    const metrics = fb.metrics || {};
-    
-    let engagementTrend = details.engagementTrend || [];
-=======
 
     // Process Age & Gender: split "F.18-24" into female/male properties for Recharts side-by-side bars
     let ageAndGender = [];
@@ -416,30 +318,10 @@ const fbapi = {
     });
 
     let engagementTrend = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
->>>>>>> origin/main
     if (engagementTrend.length === 0) {
       engagementTrend = Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (6 - i));
-<<<<<<< HEAD
-        return {
-          date: d.toISOString().split("T")[0],
-          likes: 0,
-          comments: 0,
-          shares: 0
-        };
-      });
-    }
-
-    return {
-      kpis: {
-        totalLikes: Math.round((metrics.totalEngagement || 0) * 0.6),
-        totalComments: Math.round((metrics.totalEngagement || 0) * 0.2),
-        totalShares: Math.round((metrics.totalEngagement || 0) * 0.2),
-      },
-      engagementTrend,
-      reactionTypes: details.reactionTypes || [],
-=======
         return { date: d.toISOString().split("T")[0], likes: 0, comments: 0, shares: 0, total: 0 };
       });
     }
@@ -463,35 +345,11 @@ const fbapi = {
       },
       engagementTrend,
       reactionTypes,
->>>>>>> origin/main
     };
   },
 
   getPageLikesMetrics: async () => {
     const fb = await getFbSnapshotData();
-<<<<<<< HEAD
-    const growth = fb.extended?.growth || {};
-    const metrics = fb.metrics || {};
-    
-    let followerGrowthTimeline = growth.followerGrowthTimeline || [];
-    if (followerGrowthTimeline.length === 0) {
-      followerGrowthTimeline = Array.from({ length: 30 }, (_, i) => {
-        const d = new Date();
-        d.setDate(d.getDate() - (29 - i));
-        return {
-          date: d.toISOString().split("T")[0],
-          gained: 0,
-          lost: 0,
-          net: 0
-        };
-      });
-    }
-    
-    return {
-      gained: Math.round((metrics.followers || 0) * 0.05) || growth.gained || 0,
-      lost: Math.round((metrics.followers || 0) * 0.01) || growth.lost || 0,
-      net: Math.round((metrics.followers || 0) * 0.04) || growth.net || 0,
-=======
     const metrics = fb.metrics || {};
     const currentFollowers = metrics.followers || 0;
 
@@ -514,16 +372,12 @@ const fbapi = {
       gained: 0,
       lost: 0,
       net: 0,
->>>>>>> origin/main
       followerGrowthTimeline,
     };
   },
 
   getReachViewsMetrics: async () => {
     const fb = await getFbSnapshotData();
-<<<<<<< HEAD
-    let timeline = fb.extended?.reachAndViews || [];
-=======
     const insights = fb.rawPlatformData?.facebook?.insights || [];
     const metrics = fb.metrics || {};
 
@@ -540,7 +394,6 @@ const fbapi = {
       }));
     }
 
->>>>>>> origin/main
     if (timeline.length === 0) {
       timeline = Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
@@ -554,26 +407,6 @@ const fbapi = {
         };
       });
     }
-<<<<<<< HEAD
-    const metrics = fb.metrics || {};
-    
-    const totals = timeline.reduce(
-      (acc, d) => {
-        acc.totalReach    += d.organicReach + d.paidReach;
-        acc.organicReach  += d.organicReach;
-        acc.paidReach     += d.paidReach;
-        acc.total3s       += d.threeSecondViews;
-        acc.total1m       += d.oneMinuteViews;
-        return acc;
-      },
-      { totalReach: 0, organicReach: 0, paidReach: 0, total3s: 0, total1m: 0 }
-    );
-    return {
-      kpis: {
-        totalReach:    { value: metrics.reach || totals.totalReach,   change: 0 },
-        organicReach:  { value: Math.round((metrics.reach || totals.totalReach) * 0.8) || totals.organicReach, change: 0 },
-        videoViews:    { value: Math.round((metrics.impressions || totals.totalReach) * 0.3) || totals.total3s,      change: 0 },
-=======
 
     const totals = timeline.reduce(
       (acc, d) => {
@@ -589,7 +422,6 @@ const fbapi = {
         totalReach: { value: metrics.reach || totals.totalReach, change: 0 },
         organicReach: { value: metrics.reach || totals.organicReach, change: 0 },
         videoViews: { value: metrics.impressions || 0, change: 0 },
->>>>>>> origin/main
       },
       timeline,
     };
@@ -597,13 +429,6 @@ const fbapi = {
 
   getVideosMetrics: async () => {
     const fb = await getFbSnapshotData();
-<<<<<<< HEAD
-    const videos = fb.extended?.contentData?.videos || [];
-    return {
-      kpis: {
-        totalVideos:  videos.length,
-        totalPlays:   videos.reduce((a, v) => a + (v.plays || 0), 0),
-=======
     const posts = fb.rawPlatformData?.facebook?.posts || [];
 
     // Extract video posts from raw posts data
@@ -631,7 +456,6 @@ const fbapi = {
       kpis: {
         totalVideos: videos.length,
         totalPlays: videos.reduce((a, v) => a + (v.plays || 0), 0),
->>>>>>> origin/main
         avgWatchTime: "0:00",
         topRetention: "0%",
       },
@@ -641,15 +465,6 @@ const fbapi = {
 
   getStoriesMetrics: async () => {
     const fb = await getFbSnapshotData();
-<<<<<<< HEAD
-    const stories = fb.extended?.contentData?.stories || [];
-    return {
-      kpis: {
-        activeStories:    stories.length,
-        avgReach:         Math.round(stories.reduce((a, s) => a + (s.reach || 0), 0) / Math.max(stories.length, 1)),
-        completionRate:   "0%",
-        totalReplies:     stories.reduce((a, s) => a + (s.replies || 0), 0),
-=======
     const rawStories = fb.rawPlatformData?.facebook?.stories || [];
 
     const stories = rawStories.map(s => ({
@@ -670,29 +485,18 @@ const fbapi = {
         avgReach: 0,
         completionRate: "0%",
         totalReplies: 0,
->>>>>>> origin/main
       },
       stories,
     };
   },
 
   getGroupsMetrics: async () => {
-<<<<<<< HEAD
-    const fb = await getFbSnapshotData();
-    const groups = fb.extended?.groups || {};
-    return {
-      kpis: {
-        totalMembers:  groups.totalMembers  || 0,
-        activeMembers: Math.round((groups.totalMembers || 0) * 0.45),
-        postsCount:    groups.postsCount    || 0,
-=======
     // Groups data is not available through the current Graph API calls
     return {
       kpis: {
         totalMembers: 0,
         activeMembers: 0,
         postsCount: 0,
->>>>>>> origin/main
       },
       growthTimeline: [],
       recentPosts: [],
@@ -701,40 +505,6 @@ const fbapi = {
 
   getAdsMetrics: async () => {
     const fb = await getFbSnapshotData();
-<<<<<<< HEAD
-    const ads = fb.extended?.ads || [];
-    const totals = ads.reduce(
-      (acc, a) => {
-        acc.spend       += a.spend       || 0;
-        acc.clicks      += a.clicks      || 0;
-        acc.impressions += a.impressions || 0;
-        return acc;
-      },
-      { spend: 0, clicks: 0, impressions: 0 }
-    );
-    const avgCpc = totals.clicks > 0
-      ? (totals.spend / totals.clicks).toFixed(2)
-      : "0.00";
-    return {
-      kpis: {
-        totalSpend:   { value: `₹${totals.spend.toLocaleString()}`, change: 0 },
-        impressions:  { value: totals.impressions,                   change: 0 },
-        linkClicks:   { value: totals.clicks,                        change: 0 },
-        avgCpc:       { value: `₹${avgCpc}`,                         change: 0 },
-      },
-      campaigns: ads.map((a) => ({
-        campaignName: a.name,
-        status:       a.status === "ACTIVE" ? "Active" : "Paused",
-        spend:        `₹${(a.spend || 0).toLocaleString()}`,
-        impressions:  (a.impressions || 0).toLocaleString(),
-        ctr:          a.clicks && a.impressions
-          ? `${((a.clicks / a.impressions) * 100).toFixed(2)}%`
-          : "N/A",
-        cpc:          a.clicks
-          ? `₹${((a.spend || 0) / a.clicks).toFixed(2)}`
-          : "N/A",
-      })),
-=======
     const adsData = fb.ads || {};
 
     return {
@@ -745,45 +515,18 @@ const fbapi = {
         avgCpc: { value: `₹${(adsData.costPerClick || 0).toFixed(2)}`, change: 0 },
       },
       campaigns: [],
->>>>>>> origin/main
     };
   },
 
   getReportsData: async () => {
-<<<<<<< HEAD
-    const fb = await getFbSnapshotData();
-    const exports_ = fb.extended?.utilityData?.recentExports || [];
-    return {
-      recentExports: exports_.map((e) => ({
-        ...e,
-        type:   e.name?.endsWith(".pdf") ? "PDF" : "XLSX",
-        status: "Ready",
-        report: e.name,
-      })),
-=======
     // No report generation system exists yet
     return {
       recentExports: [],
->>>>>>> origin/main
     };
   },
 
   getInsightsData: async () => {
     const fb = await getFbSnapshotData();
-<<<<<<< HEAD
-    const insights = fb.extended?.insights || [];
-    return {
-      highlights: {
-        bestTimeToPost:        "N/A",
-        topPerformingFormat:   "N/A",
-        topAudienceSegment:    "N/A",
-        recommendedContentType:"N/A",
-      },
-      recommendations: insights.map((i) => ({
-        type:           i.type,
-        recommendation: i.recommendation,
-      })),
-=======
     const posts = fb.rawPlatformData?.facebook?.posts || [];
     const demographics = fb.demographics || {};
 
@@ -855,7 +598,6 @@ const fbapi = {
         recommendedContentType: topPerformingFormat === "Photos" ? "Videos" : "Photos",
       },
       recommendations,
->>>>>>> origin/main
     };
   },
 

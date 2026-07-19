@@ -12,11 +12,7 @@ import { FileText, MoreVertical, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // ── Content type tabs ─────────────────────────────────────────────────────────
-<<<<<<< HEAD
-const TABS = ["All", "Posts", "Photos", "Links", "Text"];
-=======
 const TABS = ["All", "Photos", "Videos", "Links", "Text"];
->>>>>>> origin/main
 
 // ── Number formatter ──────────────────────────────────────────────────────────
 const fmt = (n) =>
@@ -36,16 +32,12 @@ const FacebookContent = () => {
     const fetch = async () => {
       try {
         const data = await fbapi.getOverviewMetrics();
-<<<<<<< HEAD
-        if (mounted) setPosts(data?.tables?.topPosts || []);
-=======
         const allContent = [
           ...(data?.tables?.topPosts || []),
           ...(data?.tables?.topVideos || [])
         ];
         allContent.sort((a, b) => b.date.localeCompare(a.date));
         if (mounted) setPosts(allContent);
->>>>>>> origin/main
       } catch (e) {
         if (mounted) setError("Could not load content data.");
       } finally {
@@ -147,17 +139,10 @@ const FacebookContent = () => {
                     <tr><td colSpan={8} className="py-12 text-center text-gray-500 text-sm">No content for this filter</td></tr>
                   ) : filtered.map((p, i) => (
                     <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-<<<<<<< HEAD
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <img src={p.image} alt="" className="h-10 w-10 rounded object-cover flex-shrink-0" />
-                          <p className="text-xs font-medium text-gray-200 truncate max-w-[200px]">{p.title}</p>
-=======
                       <td className="px-6 py-4 max-w-[200px] md:max-w-[300px]">
                         <div className="flex items-center gap-3 min-w-0">
                           <img src={p.image} alt="" className="h-10 w-10 rounded object-cover flex-shrink-0" />
                           <p className="text-xs font-medium text-gray-200 truncate">{p.title}</p>
->>>>>>> origin/main
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-400 text-xs whitespace-nowrap">{p.date}</td>

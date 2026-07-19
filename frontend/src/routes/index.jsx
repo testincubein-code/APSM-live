@@ -56,18 +56,11 @@ import InstagramInsights from "@/pages/InstagramDash/InstagramInsights";
 import InstagramReports from "@/pages/InstagramDash/InstagramReports";
 import InstagramSettings from "@/pages/InstagramDash/InstagramSettings";
 import InstagramHelp from "@/pages/InstagramDash/InstagramHelp";
-<<<<<<< HEAD
-import Placeholder from "@/components/Placeholder";
-import CrossPostingDash from "@/pages/CrossPostingDash/CrossPostingDash";
-import NewPostPage from "@/pages/CrossPostingDash/NewPostPage";
-import CrossPostLayout from "@/pages/CrossPostingDash/CrossPostLayout";
-=======
 import CrossPostingDash from "@/pages/CrossPostingDash/CrossPostingDash";
 import NewPostPage from "@/pages/CrossPostingDash/NewPostPage";
 import CrossPostHistory from "@/pages/CrossPostingDash/CrossPostHistory";
 import CrossPostLayout from "@/pages/CrossPostingDash/CrossPostLayout";
 import CombinedOverview from "@/pages/CombinedOverview/CombinedOverview";
->>>>>>> origin/main
 import NotFound from "@/pages/NotFound/NotFound";
 import Settings from "@/pages/Settings";
 
@@ -97,12 +90,8 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
     children: [
-<<<<<<< HEAD
-      { index: true, element: <Navigate to="/dashboard/youtube" replace /> },
-=======
       { index: true, element: <Navigate to="/dashboard/combined" replace /> },
       { path: "combined", element: <CombinedOverview /> },
->>>>>>> origin/main
       {
         path: "youtube",
         element: <YoutubeLayout />,
@@ -182,10 +171,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <CrossPostingDash /> },
           { path: "new", element: <NewPostPage /> },
-<<<<<<< HEAD
-=======
           { path: "history", element: <CrossPostHistory /> },
->>>>>>> origin/main
         ]
       },
     ],

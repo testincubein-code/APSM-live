@@ -74,27 +74,6 @@ const InstagramAudience = () => {
     );
   }
 
-<<<<<<< HEAD
-  return (
-    <div className="p-4 md:p-8 space-y-8 w-full max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Audience Demographics</h1>
-          <p className="text-gray-400 mt-1">Deep dive into your followers and non-followers</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Gender Donut */}
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5">
-          <CardHeader>
-            <CardTitle className="text-lg text-white">Gender Split</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            {isLoading || !data ? (
-              <Skeleton className="w-full h-full bg-gray-700/30 rounded-lg" />
-            ) : (
-=======
   const hasData = data && (
     (data.demographics.topCountries && data.demographics.topCountries.length > 0) ||
     (data.demographics.ageRange && data.demographics.ageRange.length > 0) ||
@@ -139,20 +118,14 @@ const InstagramAudience = () => {
               <CardTitle className="text-sm font-medium text-gray-400">Gender Split</CardTitle>
             </CardHeader>
             <CardContent className="h-[240px]">
->>>>>>> origin/main
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={data.demographics.gender}
                     cx="50%"
                     cy="50%"
-<<<<<<< HEAD
-                    innerRadius={80}
-                    outerRadius={110}
-=======
                     innerRadius={60}
                     outerRadius={80}
->>>>>>> origin/main
                     paddingAngle={5}
                     dataKey="value"
                     nameKey="type"
@@ -165,56 +138,6 @@ const InstagramAudience = () => {
                   <RechartsTooltip content={<CustomTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
-<<<<<<< HEAD
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Age Distribution Bar */}
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5">
-          <CardHeader>
-            <CardTitle className="text-lg text-white">Age Distribution</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            {isLoading || !data ? (
-              <Skeleton className="w-full h-full bg-gray-700/30 rounded-lg" />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.demographics.ageRange} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="age" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                  <Bar dataKey="value" fill="#E1306C" radius={[4, 4, 0, 0]} name="Percentage" />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Top Cities Horizontal Bar */}
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 md:col-span-2 lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg text-white">Top Cities</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            {isLoading || !data ? (
-              <Skeleton className="w-full h-full bg-gray-700/30 rounded-lg" />
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.demographics.topCities} layout="vertical" margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={true} vertical={false} />
-                  <XAxis type="number" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} width={80} />
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                  <Bar dataKey="value" fill="#833AB4" radius={[0, 4, 4, 0]} name="Percentage" />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-=======
             </CardContent>
           </Card>
 
@@ -283,7 +206,6 @@ const InstagramAudience = () => {
           </Card>
         </div>
       )}
->>>>>>> origin/main
     </div>
   );
 };

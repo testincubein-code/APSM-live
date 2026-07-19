@@ -78,11 +78,7 @@ export default function LinkedInAudience() {
   ];
 
   return (
-<<<<<<< HEAD
-    <div className="animate-fade-in p-6 space-y-6 bg-[#0B1121] min-h-screen text-white">
-=======
     <div className="animate-fade-in p-6 space-y-6  text-white">
->>>>>>> origin/main
       {/* Overview Intro */}
       <div className="flex items-center gap-3">
         <div className="p-3 bg-[#0A66C2]/10 text-[#0A66C2] rounded-full">
@@ -125,7 +121,4 @@ export default function LinkedInAudience() {
     </div>
   );
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main

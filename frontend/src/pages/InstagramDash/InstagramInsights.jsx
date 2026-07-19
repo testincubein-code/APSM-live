@@ -22,15 +22,6 @@ const InstagramInsights = () => {
     const fetchData = async () => {
       try {
         const response = await igapi.getInsights();
-<<<<<<< HEAD
-        const actions = response.actions && response.actions.length > 0 ? response.actions : [
-          { id: 'profile_visits', title: "Profile Visits", value: 0, icon: User, color: "text-[#833AB4]" },
-          { id: 'website_clicks', title: "Website Taps", value: 0, icon: ExternalLink, color: "text-[#E1306C]" },
-          { id: 'email_clicks', title: "Email Button Taps", value: 0, icon: Mail, color: "text-emerald-500" },
-          { id: 'call_clicks', title: "Call Button Taps", value: 0, icon: Phone, color: "text-blue-500" },
-          { id: 'direction_clicks', title: "Get Directions Taps", value: 0, icon: MapPin, color: "text-[#FCAF45]" }
-        ];
-=======
         const rawActions = response.actions || [];
         const actionConfig = {
           website_clicks: { title: "Website Taps", icon: ExternalLink, color: "text-[#E1306C]" },
@@ -44,7 +35,6 @@ const InstagramInsights = () => {
           ...actionConfig[a.id]
         })).filter(a => a.title);
 
->>>>>>> origin/main
         if (isMounted) setData({ actions });
       } catch (error) {
         console.error("Failed to fetch insights data:", error);
@@ -87,13 +77,10 @@ const InstagramInsights = () => {
               </CardContent>
             </Card>
           ))
-<<<<<<< HEAD
-=======
         ) : data.actions.length === 0 ? (
           <div className="col-span-full p-12 text-center border border-white/5 rounded-xl bg-[#161B22]/90 backdrop-blur-md">
             <p className="text-gray-400">No profile action insights available yet. Insights will appear once users interact with your profile buttons.</p>
           </div>
->>>>>>> origin/main
         ) : (
           data.actions.map((action) => {
             const Icon = action.icon;
@@ -101,11 +88,7 @@ const InstagramInsights = () => {
               <Card key={action.id} className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm hover:border-white/10 transition-colors">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                   <CardTitle className="text-sm font-medium text-gray-400">{action.title}</CardTitle>
-<<<<<<< HEAD
-                  <Icon className={`w-4 h-4 ${action.color}`} />
-=======
                   {Icon && <Icon className={`w-4 h-4 ${action.color}`} />}
->>>>>>> origin/main
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold text-white">{formatNumber(action.value)}</div>

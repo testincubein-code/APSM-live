@@ -102,16 +102,11 @@ const InstagramLayout = () => {
   // ── Loading state (checking connection) ───────────────────────────
   if (isLoading) {
     return (
-<<<<<<< HEAD
-      <div className="flex min-h-[60vh] items-center justify-center bg-[#0B1121] text-white">
-        <div className="relative w-12 h-12">
-=======
       <div className="flex min-h-[60vh] items-center justify-center bg-background text-white relative overflow-hidden">
         {/* ── Background Gradient Orbs ──────────────────────────────────── */}
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
         <div className="relative w-12 h-12 z-10">
->>>>>>> origin/main
           <div className="absolute top-0 left-0 w-full h-full border-4 border-[#E1306C]/20 rounded-full" />
           <div className="absolute top-0 left-0 w-full h-full border-4 border-t-[#E1306C] rounded-full animate-spin" />
         </div>
@@ -121,17 +116,12 @@ const InstagramLayout = () => {
 
   if (!isConnected) {
     return (
-<<<<<<< HEAD
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-[#0B1121] -m-6 text-white p-6 animate-fade-in">
-        <ConnectCard
-=======
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-background -m-6 text-white p-6 animate-fade-in relative overflow-hidden">
         {/* ── Background Gradient Orbs ──────────────────────────────────── */}
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
         <div className="z-10 relative">
           <ConnectCard
->>>>>>> origin/main
           icon={
             <svg className="h-8 w-8 text-[#E1306C]" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
@@ -145,23 +135,16 @@ const InstagramLayout = () => {
           brandTextClass="text-[#E1306C]"
           brandButtonClass="bg-[#E1306C] hover:bg-[#E1306C]/90 text-white font-semibold"
         />
-<<<<<<< HEAD
-=======
         </div>
->>>>>>> origin/main
       </div>
     );
   }
 
   return (
-<<<<<<< HEAD
-    <div className="flex gap-0 -m-6 h-[calc(100vh-4rem)] bg-[#0B1121] text-white overflow-hidden relative">
-=======
     <div className="flex gap-0 -m-6 h-[calc(100vh-4rem)] bg-background text-white overflow-hidden relative">
       {/* ── Background Gradient Orbs ──────────────────────────────────── */}
       <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none z-0" />
       <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none z-0" />
->>>>>>> origin/main
       {/* ── Mobile Backdrop ──────────────────────────────────────────── */}
       {isMobileMenuOpen && (
         <div
@@ -172,12 +155,7 @@ const InstagramLayout = () => {
 
       {/* ── INNER SIDEBAR ────────────────────────────────────────────── */}
       <aside className={`
-<<<<<<< HEAD
-        fixed inset-y-0 left-0 z-50 border-r border-white/10 flex flex-col 
-        bg-[#0B1121]/95 backdrop-blur-xl lg:bg-[#0B1121] lg:backdrop-blur-none
-=======
         fixed inset-y-0 left-0 z-50 border-r border-white/10 flex flex-col          bg-background/95 backdrop-blur-xl lg:bg-background lg:backdrop-blur-none
->>>>>>> origin/main
         transition-all duration-300 ease-in-out lg:static lg:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full w-64'}
         ${isCollapsed ? 'lg:w-[72px]' : 'lg:w-64'}
@@ -271,11 +249,7 @@ const InstagramLayout = () => {
       {/* ── MAIN CONTENT AREA ────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 h-full">
         {/* ── Mobile Header Toggle ───────────────────────────────────── */}
-<<<<<<< HEAD
-        <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-[#0B1121]">
-=======
         <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-background/80 backdrop-blur-md relative z-10">
->>>>>>> origin/main
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             className="text-gray-400 hover:text-[#E1306C] transition-colors"
@@ -286,11 +260,7 @@ const InstagramLayout = () => {
         </div>
 
         {/* ── Scrollable Content Area ────────────────────────────────── */}
-<<<<<<< HEAD
-        <main className="flex-1 overflow-y-auto">
-=======
         <main className="flex-1 overflow-y-auto relative z-10">
->>>>>>> origin/main
           <Outlet context={{
             profile: profileData?.profile,
             isConnected,

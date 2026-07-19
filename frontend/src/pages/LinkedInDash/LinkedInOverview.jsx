@@ -56,21 +56,7 @@ export default function LinkedInOverview() {
     };
   });
 
-<<<<<<< HEAD
-  if (composedData.length === 0) {
-    composedData = Array.from({ length: 7 }, (_, i) => {
-      const d = new Date();
-      d.setDate(d.getDate() - (6 - i));
-      return {
-        day: d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
-        impressions: 0,
-        engagementRate: 0
-      };
-    });
-  }
-=======
 
->>>>>>> origin/main
 
   // ── Custom Tooltip for Composed Chart ─────────────────────────────
   const CustomTooltip = ({ active, payload, label }) => {
@@ -147,11 +133,7 @@ export default function LinkedInOverview() {
     .slice(0, 3);
 
   return (
-<<<<<<< HEAD
-    <div className="animate-fade-in p-6 space-y-6 bg-[#0B1121] min-h-screen text-white">
-=======
     <div className="animate-fade-in p-6 space-y-6  text-white">
->>>>>>> origin/main
       {/* ── Section A: Profile/Company Header Block ──────────────────── */}
       <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 overflow-hidden">
         <CardContent className="p-6">
@@ -289,7 +271,4 @@ export default function LinkedInOverview() {
     </div>
   );
 }
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main

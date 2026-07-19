@@ -52,22 +52,6 @@ const InstagramGrowth = () => {
       try {
         const response = await igapi.getGrowth(); // Ensure we add getGrowth mock logic to igapi.js if missing
         let history = response.history || [];
-<<<<<<< HEAD
-        if (history.length === 0) {
-          history = Array.from({ length: 30 }, (_, i) => {
-            const date = new Date();
-            date.setDate(date.getDate() - (29 - i));
-            return {
-              date: date.toISOString().split('T')[0],
-              gained: 0,
-              lost: 0,
-              net: 0
-            };
-          });
-        }
-
-=======
->>>>>>> origin/main
         if (isMounted) setData({ history });
       } catch (error) {
         console.error("Failed to fetch growth data:", error);
@@ -89,14 +73,9 @@ const InstagramGrowth = () => {
     );
   }
 
-<<<<<<< HEAD
-  const totalGained = data ? data.history.reduce((a, b) => a + b.gained, 0) : 0;
-  const totalLost = data ? data.history.reduce((a, b) => a + b.lost, 0) : 0;
-=======
   const hasSufficientData = data && data.history.length > 1;
   const totalGained = hasSufficientData ? data.history.reduce((a, b) => a + b.gained, 0) : 0;
   const totalLost = hasSufficientData ? data.history.reduce((a, b) => a + b.lost, 0) : 0;
->>>>>>> origin/main
   const totalNet = totalGained - totalLost;
 
   return (
@@ -108,85 +87,6 @@ const InstagramGrowth = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Followers Gained</CardTitle>
-            <UserPlus className="w-4 h-4 text-emerald-500" />
-          </CardHeader>
-          <CardContent>
-            {isLoading || !data ? (
-              <Skeleton className="h-8 w-24 bg-gray-700/50" />
-            ) : (
-              <div className="text-2xl font-bold text-white">+{formatNumber(totalGained)}</div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Followers Lost</CardTitle>
-            <UserMinus className="w-4 h-4 text-red-500" />
-          </CardHeader>
-          <CardContent>
-            {isLoading || !data ? (
-              <Skeleton className="h-8 w-24 bg-gray-700/50" />
-            ) : (
-              <div className="text-2xl font-bold text-white">-{formatNumber(totalLost)}</div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Net Growth</CardTitle>
-            <TrendingUp className="w-4 h-4 text-[#E1306C]" />
-          </CardHeader>
-          <CardContent>
-            {isLoading || !data ? (
-              <Skeleton className="h-8 w-24 bg-gray-700/50" />
-            ) : (
-              <div className={`text-2xl font-bold ${totalNet >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                {totalNet >= 0 ? '+' : ''}{formatNumber(totalNet)}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-lg text-white">Follower Acquisition Timeline</CardTitle>
-        </CardHeader>
-        <CardContent className="h-[400px]">
-          {isLoading || !data ? (
-            <Skeleton className="w-full h-full bg-gray-700/30 rounded-lg" />
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data.history} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorGained" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorLost" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="date" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                <RechartsTooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)' }} />
-                <Area type="monotone" dataKey="gained" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorGained)" name="Gained" />
-                <Area type="monotone" dataKey="lost" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorLost)" name="Lost" />
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
-        </CardContent>
-      </Card>
-=======
       {!hasSufficientData ? (
         <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm text-center py-16">
           <CardContent className="flex flex-col items-center justify-center space-y-4">
@@ -265,7 +165,6 @@ const InstagramGrowth = () => {
           </Card>
         </>
       )}
->>>>>>> origin/main
     </div>
   );
 };

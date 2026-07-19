@@ -105,24 +105,15 @@ const FacebookVideos = () => {
                     <tr><td colSpan={7} className="py-12 text-center text-gray-500 text-sm">No videos found</td></tr>
                   ) : data.videos.map((vid, i) => (
                     <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-<<<<<<< HEAD
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-=======
                       <td className="px-6 py-4 max-w-[200px] md:max-w-[300px]">
                         <div className="flex items-center gap-3 min-w-0">
->>>>>>> origin/main
                           <div className="relative h-10 w-16 rounded overflow-hidden flex-shrink-0">
                             <img src={vid.image} alt="" className="h-full w-full object-cover" />
                             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                               <Play className="h-3 w-3 text-white fill-white" />
                             </div>
                           </div>
-<<<<<<< HEAD
-                          <p className="text-xs font-medium text-gray-200 truncate max-w-[200px]">{vid.title}</p>
-=======
                           <p className="text-xs font-medium text-gray-200 truncate">{vid.title}</p>
->>>>>>> origin/main
                         </div>
                       </td>
                       <td className="px-6 py-4 text-gray-400 text-xs whitespace-nowrap">{vid.date}</td>
