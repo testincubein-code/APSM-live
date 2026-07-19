@@ -123,12 +123,12 @@ export function FacebookOverview({ data, dateRange }) {
                   <tbody className="divide-y divide-white/5">
                     {(d?.tables?.topPosts || []).map((p, i) => (
                       <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="py-3">
+                        <td className="py-3 max-w-[150px] sm:max-w-[200px] xl:max-w-[250px]">
                           <div className="flex items-center gap-3">
-                            <img src={p.image} alt="" className="h-10 w-10 rounded object-cover" />
-                            <div>
-                              <p className="text-xs font-medium text-slate-200 truncate max-w-[200px]">{p.title}</p>
-                              <p className="text-[10px] text-slate-500">{p.date}</p>
+                            <img src={p.image} alt="" className="h-10 w-10 rounded object-cover flex-shrink-0" />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-medium text-slate-200 truncate">{p.title}</p>
+                              <p className="text-[10px] text-slate-500 truncate">{p.date}</p>
                             </div>
                           </div>
                         </td>
@@ -163,15 +163,15 @@ export function FacebookOverview({ data, dateRange }) {
                   <tbody className="divide-y divide-white/5">
                     {(d?.tables?.topVideos || []).map((v, i) => (
                       <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="py-3">
+                        <td className="py-3 max-w-[150px] sm:max-w-[200px] xl:max-w-[250px]">
                           <div className="flex items-center gap-3">
-                            <div className="relative h-10 w-16 rounded overflow-hidden">
+                            <div className="relative h-10 w-16 rounded overflow-hidden flex-shrink-0">
                               <img src={v.image} alt="" className="h-full w-full object-cover" />
                               <span className="absolute bottom-1 right-1 bg-black/70 text-[8px] px-1 rounded text-white">{v.duration}</span>
                             </div>
-                            <div>
-                              <p className="text-xs font-medium text-slate-200 truncate max-w-[200px]">{v.title}</p>
-                              <p className="text-[10px] text-slate-500">{v.date} • {v.duration}</p>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-medium text-slate-200 truncate">{v.title}</p>
+                              <p className="text-[10px] text-slate-500 truncate">{v.date} • {v.duration}</p>
                             </div>
                           </div>
                         </td>

@@ -19,6 +19,7 @@ export default {
       'pages_show_list',
       'pages_read_engagement',
       'pages_manage_posts',
+      'publish_video',
       'business_management',
     ],
 

@@ -39,15 +39,27 @@ export default function NewPostPage() {
   // ── Form State (react-hook-form) ──────────────────────────────────
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     defaultValues: {
+<<<<<<< HEAD
       caption: "",
       description: "",
+=======
+      title: "",
+      body: "",
+      hashtags: "",
+      link: "",
+>>>>>>> origin/main
       platforms: [],
       mediaFile: null,
     }
   });
 
+<<<<<<< HEAD
   const captionVal = watch("caption", "");
   const descVal = watch("description", "");
+=======
+  const titleVal = watch("title", "");
+  const bodyVal = watch("body", "");
+>>>>>>> origin/main
   const selectedPlatforms = watch("platforms", []);
   const mediaFile = watch("mediaFile", null);
 
@@ -114,8 +126,13 @@ export default function NewPostPage() {
   // ── Submit Logic ──────────────────────────────────────────────────
   const onSubmit = async (data) => {
     // 1. Validation
+<<<<<<< HEAD
     if (!data.caption.trim()) {
       toast({ description: "Caption cannot be empty.", variant: "destructive" });
+=======
+    if (!data.title?.trim() && !data.body?.trim()) {
+      toast({ description: "You must provide either a title or a body.", variant: "destructive" });
+>>>>>>> origin/main
       return;
     }
     if (selectedPlatforms.length === 0) {
@@ -133,8 +150,15 @@ export default function NewPostPage() {
 
     // 2. Build Payload
     const formData = new FormData();
+<<<<<<< HEAD
     formData.append("caption", data.caption);
     if (data.description) formData.append("description", data.description);
+=======
+    if (data.title) formData.append("title", data.title);
+    if (data.body) formData.append("body", data.body);
+    if (data.hashtags) formData.append("hashtags", data.hashtags);
+    if (data.link) formData.append("link", data.link);
+>>>>>>> origin/main
     formData.append("platforms", JSON.stringify(selectedPlatforms));
 
     if (data.mediaFile) {
@@ -164,7 +188,11 @@ export default function NewPostPage() {
 
       // Update Context History
       addToHistory({
+<<<<<<< HEAD
         caption: data.caption,
+=======
+        caption: data.title || data.body || "New Post",
+>>>>>>> origin/main
         platforms: selectedPlatforms,
         status: finalDate ? "Scheduled" : "Published",
         scheduledFor: finalDate,
@@ -172,8 +200,15 @@ export default function NewPostPage() {
       });
 
       // Reset form
+<<<<<<< HEAD
       setValue("caption", "");
       setValue("description", "");
+=======
+      setValue("title", "");
+      setValue("body", "");
+      setValue("hashtags", "");
+      setValue("link", "");
+>>>>>>> origin/main
       setValue("platforms", []);
       removeMedia();
       setIsScheduling(false);
@@ -210,6 +245,7 @@ export default function NewPostPage() {
           {/* ── LEFT COLUMN (The Form) ───────────────────────────────────── */}
           <div className="space-y-6">
 
+<<<<<<< HEAD
             {/* Caption */}
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -254,6 +290,61 @@ export default function NewPostPage() {
               />
             </div>
 
+=======
+            {/* Title */}
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <label className="text-sm font-medium text-slate-300">Title / Headline <span className="text-red-400">*</span></label>
+                <span className={`text-xs ${titleVal.length > 100 ? "text-red-400" : "text-slate-500"}`}>
+                  {titleVal.length} / 100
+                </span>
+              </div>
+              <input
+                type="text"
+                {...register("title", { required: true, maxLength: 100 })}
+                placeholder="Catchy headline for your post"
+                className="w-full bg-[#1e2230] border border-white/5 rounded-lg p-3 text-sm focus:outline-none focus:border-[#6366f1] transition-colors placeholder:text-slate-500"
+              />
+            </div>
+
+            {/* Body */}
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <label className="text-sm font-medium text-slate-300">Body / Description</label>
+                <span className={`text-xs ${bodyVal.length > 2000 ? "text-red-400" : "text-slate-500"}`}>
+                  {bodyVal.length} / 2000
+                </span>
+              </div>
+              <textarea
+                {...register("body", { maxLength: 2000 })}
+                placeholder="What do you want to share?"
+                className="w-full bg-[#1e2230] border border-white/5 rounded-lg p-3 text-sm focus:outline-none focus:border-[#6366f1] resize-none h-32 transition-colors placeholder:text-slate-500"
+              />
+            </div>
+
+            {/* Hashtags & Link (2 columns) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300">Hashtags</label>
+                <input
+                  type="text"
+                  {...register("hashtags")}
+                  placeholder="#tech #innovation"
+                  className="w-full bg-[#1e2230] border border-white/5 rounded-lg p-3 text-sm focus:outline-none focus:border-[#6366f1] transition-colors placeholder:text-slate-500"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-300">Link (Optional)</label>
+                <input
+                  type="url"
+                  {...register("link")}
+                  placeholder="https://example.com"
+                  className="w-full bg-[#1e2230] border border-white/5 rounded-lg p-3 text-sm focus:outline-none focus:border-[#6366f1] transition-colors placeholder:text-slate-500"
+                />
+              </div>
+            </div>
+
+>>>>>>> origin/main
             {/* Media Upload */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-300">Media (Max size 50MB)</label>
@@ -396,7 +487,11 @@ export default function NewPostPage() {
                           </td>
                         </tr>
                       ) : (
+<<<<<<< HEAD
                         postHistory.map((post) => (
+=======
+                        postHistory.slice(0, 6).map((post) => (
+>>>>>>> origin/main
                           <tr key={post.id} className="hover:bg-white/[0.02]">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
@@ -444,6 +539,21 @@ export default function NewPostPage() {
                     </tbody>
                   </table>
                 </div>
+<<<<<<< HEAD
+=======
+                {postHistory.length > 6 && (
+                  <div className="bg-[#1e2230] border-t border-white/5 p-3 flex justify-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => navigate("/dashboard/crosspost/history")}
+                      className="text-xs text-[#6366f1] hover:text-[#4f46e5] hover:bg-transparent"
+                    >
+                      View in details
+                    </Button>
+                  </div>
+                )}
+>>>>>>> origin/main
               </Card>
             </div>
 

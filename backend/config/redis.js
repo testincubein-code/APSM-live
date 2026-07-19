@@ -8,6 +8,12 @@ export const redisConnectionOptions = {
     enableReadyCheck: false,
     tls: {
         rejectUnauthorized: false
+    },
+    // Upstash-specific configurations to prevent idle ECONNRESET
+    keepAlive: 10000, 
+    pingInterval: 30000,
+    retryStrategy: (times) => {
+        return Math.min(times * 50, 2000); // Auto-reconnect quietly
     }
 };
 
@@ -21,6 +27,7 @@ if (process.env.REDIS_URL) {
     });
 
     redisClient.on('error', (err) => {
+        if (err.message.includes('ECONNRESET')) return; // Ignore expected Upstash disconnects
         console.error('🔴 Redis connection error:', err.message);
     });
 } else {
@@ -31,6 +38,14 @@ if (process.env.REDIS_URL) {
 export const connectionOptions = process.env.REDIS_URL
     ? new Redis(process.env.REDIS_URL, redisConnectionOptions)
     : null;
+
+if (connectionOptions) {
+    // Prevent unhandled promise rejections on the BullMQ connection instance
+    connectionOptions.on('error', (err) => {
+        if (err.message.includes('ECONNRESET')) return;
+        console.error('🔴 BullMQ Redis error:', err.message);
+    });
+}
 
 // Kept for backward compatibility if needed elsewhere
 export default redisClient;

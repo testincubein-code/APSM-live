@@ -8,7 +8,7 @@ export default function Loader() {
     <div className="flex h-screen w-full items-center justify-center bg-background">
       {/* ── Animated brand icon ──────────────────────────────────────── */}
       <div className="flex flex-col items-center gap-4">
-        <div className="animate-glow flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600">
+        <div className="animate-glow flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-700">
           <BarChart3 className="h-8 w-8 text-white animate-pulse" />
         </div>
         <p className="text-sm font-medium text-muted-foreground animate-pulse">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+<<<<<<< HEAD
 import { Download, FileText, Calendar, Filter } from 'lucide-react';
 
 const InstagramReports = () => {
@@ -13,6 +14,36 @@ const InstagramReports = () => {
     setTimeout(() => {
       setIsExporting(false);
     }, 1500);
+=======
+import { Download, FileText, Filter } from 'lucide-react';
+import DateRangePicker from '@/components/DateRangePicker';
+import reportApi from '@/services/reportApi';
+
+const InstagramReports = () => {
+  const { isConnected } = useOutletContext();
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingCsv, setIsExportingCsv] = useState(false);
+
+  const d = new Date();
+  d.setDate(d.getDate() - 30);
+  const defaultStart = d.toISOString().split('T')[0];
+  const defaultEnd = new Date().toISOString().split('T')[0];
+  const [dateRange, setDateRange] = useState({ start: defaultStart, end: defaultEnd });
+
+  const handleExport = async (format) => {
+    if (format === 'pdf') setIsExportingPdf(true);
+    if (format === 'csv') setIsExportingCsv(true);
+
+    try {
+      await reportApi.exportAnalytics('instagram', format, dateRange.start, dateRange.end);
+    } catch (error) {
+      console.error(`Failed to export ${format}:`, error);
+      alert(`Failed to export ${format.toUpperCase()}`);
+    } finally {
+      setIsExportingPdf(false);
+      setIsExportingCsv(false);
+    }
+>>>>>>> origin/main
   };
 
   if (!isConnected) {
@@ -43,12 +74,24 @@ const InstagramReports = () => {
             <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-300 mb-1 block">Date Range</label>
+<<<<<<< HEAD
                 <div className="flex items-center gap-2 p-2 border border-white/10 rounded-lg bg-black/20">
                   <Calendar className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-300">Last 30 Days</span>
                 </div>
               </div>
 
+=======
+                <div className="flex items-center gap-2 p-1 border border-white/10 rounded-lg bg-black/20">
+                  <DateRangePicker 
+                    startDate={dateRange.start} 
+                    endDate={dateRange.end} 
+                    onChange={setDateRange} 
+                  />
+                </div>
+              </div>
+              
+>>>>>>> origin/main
               <div>
                 <label className="text-sm font-medium text-gray-300 mb-1 block">Metrics to Include</label>
                 <div className="flex items-center gap-2 p-2 border border-white/10 rounded-lg bg-black/20">
@@ -59,6 +102,7 @@ const InstagramReports = () => {
             </div>
 
             <div className="flex gap-3">
+<<<<<<< HEAD
               <Button
                 onClick={handleExport}
                 disabled={isExporting}
@@ -75,6 +119,24 @@ const InstagramReports = () => {
               >
                 {isExporting ? 'Generating...' : 'Export CSV'}
                 {!isExporting && <Download className="w-4 h-4 ml-2" />}
+=======
+              <Button 
+                onClick={() => handleExport('pdf')}
+                disabled={isExportingPdf || isExportingCsv}
+                className="flex-1 bg-[#E1306C] hover:bg-[#E1306C]/90 text-white font-semibold shadow-lg shadow-[#E1306C]/20 transition-all active:scale-95"
+              >
+                {isExportingPdf ? 'Generating PDF...' : 'Export as PDF'}
+                {!isExportingPdf && <FileText className="w-4 h-4 ml-2" />}
+              </Button>
+              <Button 
+                onClick={() => handleExport('csv')}
+                disabled={isExportingPdf || isExportingCsv}
+                variant="outline"
+                className="flex-1 border-white/10 text-white hover:bg-white/10 font-semibold shadow-lg transition-all active:scale-95"
+              >
+                {isExportingCsv ? 'Generating CSV...' : 'Export CSV'}
+                {!isExportingCsv && <Download className="w-4 h-4 ml-2" />}
+>>>>>>> origin/main
               </Button>
             </div>
           </CardContent>

@@ -130,13 +130,17 @@ const getAnalyticsSummary = async (req, res, next) => {
           'instagram',
           fetchAndSaveInstagramAnalytics
         );
+        const history = await AnalyticsSnapshot.find({ incubationCenterId: userId, platform: 'instagram' })
+          .sort({ snapshotDate: 1 })
+          .limit(30);
         return res.json({
           message: failedLiveFetch
             ? 'Retrieved latest cached Instagram analytics (live fetch failed)'
             : fromCache
               ? 'Instagram analytics retrieved from cache'
               : 'Instagram analytics retrieved successfully',
-          data: snapshot,          // ← single object
+          data: snapshot,
+          history: history,
         });
       } catch (err) {
         return res.status(400).json({ error: err.message });
@@ -236,4 +240,161 @@ const getAnalyticsSummary = async (req, res, next) => {
   }
 };
 
-export default { getAnalyticsSummary };
+const getCombinedAnalytics = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    
+    // Fetch all snapshots for the past 7 days for the user
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const snapshots = await AnalyticsSnapshot.find({
+      incubationCenterId: userId,
+      snapshotDate: { $gte: sevenDaysAgo }
+    }).sort({ snapshotDate: 1 }); // Ascending for timeline processing
+
+    const activePlatforms = (req.user.socialAccounts || [])
+      .filter(acc => acc.isActive)
+      .map(acc => acc.platform);
+
+    const platforms = ['youtube', 'linkedin', 'facebook', 'instagram'].filter(p => {
+      if (p === 'facebook' || p === 'instagram') return activePlatforms.includes('meta') || activePlatforms.includes(p);
+      return activePlatforms.includes(p);
+    });
+    
+    // 1. Current Totals & Platform specific latest metrics
+    const platformLatest = {};
+    const platformHistory = { youtube: [], linkedin: [], facebook: [], instagram: [] };
+
+    // Group by platform and build history
+    snapshots.forEach(snapshot => {
+      const p = snapshot.platform;
+      if (!platforms.includes(p)) return;
+      
+      const dateStr = snapshot.snapshotDate.toISOString().split('T')[0];
+      
+      let reach = 0;
+      let engagement = 0;
+      
+      if (p === 'youtube') {
+        reach = snapshot.metrics.views || 0;
+        engagement = snapshot.metrics.likes + snapshot.metrics.comments + snapshot.metrics.shares;
+      } else if (p === 'linkedin') {
+        reach = snapshot.metrics.impressions || 0;
+        engagement = snapshot.metrics.reactions + snapshot.metrics.comments + snapshot.metrics.shares;
+      } else if (p === 'facebook') {
+        reach = snapshot.metrics.page_impressions || 0;
+        engagement = snapshot.metrics.page_engaged_users || 0;
+      } else if (p === 'instagram') {
+        reach = snapshot.metrics.reach || 0;
+        engagement = snapshot.metrics.total_interactions || 0;
+      }
+
+      platformHistory[p].push({
+        date: dateStr,
+        reach,
+        engagement,
+        followers: snapshot.metrics.subscribers || snapshot.metrics.follower_count || snapshot.metrics.followers_count || 0
+      });
+      
+      // Keep replacing with the latest to get the most recent metrics at the end
+      platformLatest[p] = snapshot;
+    });
+
+    // 2. Aggregate Totals
+    let totalFollowers = 0;
+    let totalReach = 0;
+    let totalImpressions = 0;
+    let totalEngagement = 0;
+    let totalPosts = 0;
+    let totalProfileViews = 0;
+    let totalClicks = 0;
+
+    const platformSummaries = {};
+
+    platforms.forEach(p => {
+      const latest = platformLatest[p];
+      let followers = 0, reach = 0, impressions = 0, engagement = 0, posts = 0;
+      
+      if (latest) {
+        if (p === 'youtube') {
+          followers = latest.metrics.subscribers || 0;
+          reach = latest.metrics.views || 0;
+          impressions = latest.metrics.views || 0; // fallback
+          engagement = (latest.metrics.likes || 0) + (latest.metrics.comments || 0) + (latest.metrics.shares || 0);
+          posts = latest.metrics.videoCount || 0;
+        } else if (p === 'linkedin') {
+          followers = latest.metrics.follower_count || 0;
+          reach = latest.metrics.impressions || 0; // fallback
+          impressions = latest.metrics.impressions || 0;
+          engagement = (latest.metrics.reactions || 0) + (latest.metrics.comments || 0) + (latest.metrics.shares || 0);
+        } else if (p === 'facebook') {
+          followers = latest.metrics.followers_count || 0;
+          reach = latest.metrics.page_impressions || 0;
+          impressions = latest.metrics.page_impressions || 0;
+          engagement = latest.metrics.page_engaged_users || 0;
+          posts = latest.metrics.posts_count || 0;
+        } else if (p === 'instagram') {
+          followers = latest.metrics.followers_count || 0;
+          reach = latest.metrics.reach || 0;
+          impressions = latest.metrics.impressions || 0;
+          engagement = latest.metrics.total_interactions || 0;
+          posts = latest.metrics.media_count || 0;
+          totalProfileViews += latest.metrics.profile_views || 0;
+        }
+
+        totalFollowers += followers;
+        totalReach += reach;
+        totalImpressions += impressions;
+        totalEngagement += engagement;
+        totalPosts += posts;
+      }
+      
+      platformSummaries[p] = { followers, reach, engagement, posts };
+    });
+
+    const engagementRate = totalReach > 0 ? ((totalEngagement / totalReach) * 100).toFixed(2) : 0;
+
+    // 3. Build Timeline Array for Recharts
+    // Generate an array of the last 7 dates
+    const timeline = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      
+      const dayData = { date: dateStr };
+      platforms.forEach(p => {
+        // Find the closest snapshot on or before this date
+        const hist = platformHistory[p].filter(h => h.date <= dateStr);
+        const closest = hist[hist.length - 1] || { reach: 0, engagement: 0 };
+        dayData[`${p}Reach`] = closest.reach;
+        dayData[`${p}Engagement`] = closest.engagement;
+      });
+      
+      timeline.push(dayData);
+    }
+
+    return res.json({
+      message: 'Combined analytics retrieved successfully',
+      data: {
+        totals: {
+          followers: totalFollowers,
+          reach: totalReach,
+          impressions: totalImpressions,
+          engagement: totalEngagement,
+          posts: totalPosts,
+          profileViews: totalProfileViews,
+          clicks: totalClicks,
+          engagementRate
+        },
+        platformSummaries,
+        timeline,
+        sparklines: platformHistory // For mini sparkline charts
+      }
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
+
+export default { getAnalyticsSummary, getCombinedAnalytics };

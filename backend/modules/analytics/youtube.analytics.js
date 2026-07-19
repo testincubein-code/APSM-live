@@ -91,7 +91,7 @@ export const fetchAndSaveYouTubeAnalytics = async (userId) => {
       console.log(`[youtube.analytics] Fetching daily performance report...`);
       dailyReport = await fetchAnalyticsReport(
         'day',
-        'views,comments,likes,dislikes,shares,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,subscribersGained,subscribersLost',
+        'views,comments,likes,dislikes,shares,estimatedMinutesWatched,averageViewDuration,subscribersGained,subscribersLost',
         'day'
       );
     } catch (err) {

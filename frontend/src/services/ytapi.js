@@ -217,6 +217,14 @@ export const parseRecentVideos = (snapshot) => {
 // ── Parse Country Data (for geographic charts) ──────────────────────
 // Extracts top countries with view counts from demographics or reports.
 export const parseCountryData = (snapshot) => {
+  const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+  const formatCountryName = (code) => {
+    try {
+      if (code && code.length === 2) return regionNames.of(code) || code;
+    } catch (e) {}
+    return code || "Unknown";
+  };
+
   // Try demographics first (pre-processed by backend)
   const topCountries = snapshot?.demographics?.topCountries;
   if (topCountries && Array.isArray(topCountries) && topCountries.length > 0) {
@@ -224,7 +232,11 @@ export const parseCountryData = (snapshot) => {
       .map((c) => {
         if (!c) return null;
         return {
+<<<<<<< HEAD
           country: c.name || "Unknown",
+=======
+          country: formatCountryName(c.name),
+>>>>>>> origin/main
           views: parseInt(c.count) || 0,
         };
       })
@@ -246,7 +258,11 @@ export const parseCountryData = (snapshot) => {
     .map((row) => {
       if (!Array.isArray(row)) return null;
       return {
+<<<<<<< HEAD
         country: row[colMap["country"]] || "Unknown",
+=======
+        country: formatCountryName(row[colMap["country"]]),
+>>>>>>> origin/main
         views: parseInt(row[colMap["views"]]) || 0,
       };
     })
@@ -305,7 +321,18 @@ export const parseAgeGenderData = (snapshot) => {
   for (const item of ageAndGender) {
     if (!item) continue;
     const parts = (item.group || "").split("_");
-    const ageGroup = parts[0] || "Unknown";
+    
+    // Format age group from 'age1824' to '18-24' or 'age65_' to '65+'
+    let ageGroup = parts[0] || "Unknown";
+    if (ageGroup.startsWith('age')) {
+      const match = ageGroup.replace('age', '');
+      if (match.endsWith('plus') || match.endsWith('_')) {
+        ageGroup = match.replace('plus', '+').replace('_', '+');
+      } else if (match.length === 4) {
+        ageGroup = `${match.slice(0, 2)}-${match.slice(2)}`;
+      }
+    }
+
     const gender = parts[1] || "unknown";
     const count = parseInt(item.count) || 0;
 
@@ -314,7 +341,7 @@ export const parseAgeGenderData = (snapshot) => {
     ageMap[ageGroup] += count;
 
     // Gender aggregation
-    const genderLabel = gender === "male" ? "Male" : gender === "female" ? "Female" : "Other";
+    const genderLabel = gender.toLowerCase() === "male" ? "Male" : gender.toLowerCase() === "female" ? "Female" : "Other";
     if (!genderMap[genderLabel]) genderMap[genderLabel] = 0;
     genderMap[genderLabel] += count;
   }

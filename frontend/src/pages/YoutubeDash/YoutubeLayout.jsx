@@ -259,8 +259,12 @@ export default function YoutubeLayout() {
   // ── Not connected state ───────────────────────────────────────────
   if (!isConnected || localStorage.getItem('youtubeToken') === 'false') {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-[#0B1121] -m-6 text-white p-6 animate-fade-in">
-        <ConnectCard
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] bg-background -m-6 text-white p-6 animate-fade-in relative overflow-hidden">
+        {/* ── Background Gradient Orbs ──────────────────────────────────── */}
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
+        <div className="z-10 relative">
+          <ConnectCard
           icon={<Youtube className="h-8 w-8 text-[#FF0000]" />}
           cardTitle="Connect YouTube Channel"
           cardDescription="Connect your YouTube account to view sub counts, channel views, watch time, and detailed visual performance graphs."
@@ -270,6 +274,7 @@ export default function YoutubeLayout() {
           brandTextClass="text-[#FF0000]"
           brandButtonClass="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white font-semibold"
         />
+        </div>
       </div>
     );
   }
@@ -277,7 +282,10 @@ export default function YoutubeLayout() {
   const closeMobile = () => setIsMobileOpen(false);
 
   return (
-    <div className="flex gap-0 -m-6 h-[calc(100vh-4rem)] bg-[#0B1121] text-white overflow-hidden relative transition-colors duration-200">
+    <div className="flex gap-0 -m-6 h-[calc(100vh-4rem)] bg-background text-white overflow-hidden relative transition-colors duration-200">
+      {/* ── Background Gradient Orbs ──────────────────────────────────── */}
+      <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none z-0" />
+      <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none z-0" />
       
       {/* ── Mobile Backdrop ───────────────────────────────────────────────── */}
       {isMobileOpen && (
@@ -291,7 +299,7 @@ export default function YoutubeLayout() {
       <aside
         className={`
           fixed inset-y-0 left-0 z-50 flex flex-col border-r border-white/10
-          bg-[#0B1121]/95 backdrop-blur-xl lg:bg-[#0B1121] lg:backdrop-blur-none
+          bg-background/95 backdrop-blur-xl lg:bg-background lg:backdrop-blur-none
           transition-all duration-300 ease-in-out
           lg:static lg:translate-x-0
           ${isMobileOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"}
@@ -397,7 +405,7 @@ export default function YoutubeLayout() {
           }} 
         />
         {/* ── Mobile Header Toggle ───────────────────────────────────── */}
-        <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-[#0B1121]">
+        <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-background/80 backdrop-blur-md relative z-10">
           <button 
             onClick={() => setIsMobileOpen(true)}
             className="text-gray-400 hover:text-[#FF0000] transition-colors"
@@ -408,7 +416,7 @@ export default function YoutubeLayout() {
         </div>
 
         {/* ── Page Header ──────────────────────────────────────────────── */}
-        <div className="sticky top-0 z-10 border-b border-white/10 bg-[#0B1121]/80 backdrop-blur-md px-6 py-3">
+        <div className="sticky top-0 z-10 border-b border-white/10 bg-background/80 backdrop-blur-md px-6 py-3">
           <div className="flex items-center justify-between">
             <DashboardHeader
               title="YouTube Analytics"

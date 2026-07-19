@@ -97,7 +97,11 @@ export default function LinkedInEngagement() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="animate-fade-in p-6 space-y-6 bg-[#0B1121] min-h-screen text-white">
+=======
+    <div className="animate-fade-in p-6 space-y-6  text-white">
+>>>>>>> origin/main
       {/* ── Section A: Interaction Ledger ─────────────────────────────── */}
       <div className="grid gap-4 md:grid-cols-3">
         {ledgerStats.map((kpi, idx) => (
@@ -187,3 +191,7 @@ export default function LinkedInEngagement() {
     </div>
   );
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main

@@ -10,6 +10,13 @@ const queueConnection = process.env.REDIS_URL
     ? new Redis(process.env.REDIS_URL, redisConnectionOptions) 
     : null;
 
+if (queueConnection) {
+    queueConnection.on('error', (err) => {
+        if (err.message.includes('ECONNRESET') || err.message.includes('ETIMEDOUT')) return;
+        console.error('🔴 Queue Redis error:', err.message);
+    });
+}
+
 const crossPostQueue = new Queue('CrossPostQueue', { connection: queueConnection });
 
 const uploadToCloudinary = (fileBuffer) => {
@@ -28,7 +35,7 @@ const uploadToCloudinary = (fileBuffer) => {
 export const createAutomationJob = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { caption, platforms, scheduledDate } = req.body;
+        const { caption, title, body, hashtags, link, platforms, scheduledDate } = req.body;
         let { mediaUrl } = req.body; // In case they send a URL directly instead of a file
         let cloudinaryId = null;
 
@@ -48,6 +55,10 @@ export const createAutomationJob = async (req, res) => {
         const newPost = await Automation.create({
             userId,
             caption,
+            title,
+            body,
+            hashtags,
+            link,
             platforms: JSON.parse(platforms || '[]'),
             mediaUrl,
             cloudinaryId,
@@ -60,6 +71,10 @@ export const createAutomationJob = async (req, res) => {
             postId: newPost._id,
             userId,
             caption,
+            title,
+            body,
+            hashtags,
+            link,
             platforms: JSON.parse(platforms || '[]'),
             mediaUrl
         }, {
@@ -80,5 +95,35 @@ export const createAutomationJob = async (req, res) => {
     } catch (error) {
         console.error('Queue Scheduling Error:', error);
         res.status(500).json({ error: 'Failed to schedule post: ' + error.message });
+    }
+};
+
+export const getAutomationJobs = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const posts = await Automation.find({ userId }).sort({ createdAt: -1 }).limit(50);
+        
+        // Map database fields to the structure expected by the frontend
+        const history = posts.map(post => ({
+            id: post._id,
+            caption: post.title || post.body || post.caption || "New Post",
+            title: post.title,
+            body: post.body || post.caption,
+            hashtags: post.hashtags,
+            link: post.link,
+            platforms: post.platforms,
+            status: post.status === 'COMPLETED' ? 'Published' :
+                    post.status === 'FAILED' ? 'Failed' :
+                    post.status === 'PARTIAL_SUCCESS' ? 'Partial' :
+                    post.scheduledDate && post.scheduledDate > new Date() ? 'Scheduled' : 'Processing',
+            scheduledFor: post.scheduledDate,
+            createdAt: post.createdAt,
+            thumbnail: post.mediaUrl || null
+        }));
+
+        res.status(200).json(history);
+    } catch (error) {
+        console.error('Fetch Automation History Error:', error);
+        res.status(500).json({ error: 'Failed to fetch automation history' });
     }
 };

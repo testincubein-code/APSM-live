@@ -95,12 +95,23 @@ export default function CrossPostingDash() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1121] text-slate-100 p-2 md:p-6 space-y-6 animate-fade-in -m-6 sm:-m-8 relative">
+    <div className="min-h-screen bg-background text-slate-100 p-2 md:p-6 space-y-6 animate-fade-in -m-6 sm:-m-8 relative overflow-hidden">
+      {/* ── Background Gradient Orbs ──────────────────────────────────── */}
+      <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
+      
       <ConfirmDisconnectModal 
         isOpen={!!disconnectTarget} 
         onClose={() => setDisconnectTarget(null)} 
-        onConfirm={() => {
-          // No API function currently implemented for this page, just close the modal
+        onConfirm={async () => {
+          if (disconnectTarget) {
+            try {
+              await crosspostApi.revokeAccess(disconnectTarget);
+              window.location.reload();
+            } catch (err) {
+              console.error("Failed to disconnect", err);
+            }
+          }
           setDisconnectTarget(null);
         }} 
       />

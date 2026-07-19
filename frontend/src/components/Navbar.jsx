@@ -11,7 +11,7 @@ export default function Navbar({ title = "Dashboard" }) {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-card/80 px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/10 bg-background text-white px-6">
       {/* ── Page Title ────────────────────────────────────────────────── */}
       <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
 

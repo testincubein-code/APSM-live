@@ -52,7 +52,7 @@ const Settings = () => {
 
   // ── Minimal loading UI shown while the redirect processes ─────────
   return (
-    <div className="min-h-screen bg-[#0b0f19] flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center space-y-4 animate-pulse">
         <Loader className="text-purple-500 animate-spin mx-auto" size={32} />
         <p className="text-sm text-slate-400 font-medium">{statusMessage}</p>
@@ -62,3 +62,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

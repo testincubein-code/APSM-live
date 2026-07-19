@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 
 const automationSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    caption: { type: String, required: true },
+    caption: { type: String, required: false }, // Kept for backward compatibility
+    title: { type: String, required: false },
+    body: { type: String, required: false },
+    hashtags: { type: String, required: false },
+    link: { type: String, required: false },
     platforms: [{ type: String, required: true }],
     mediaUrl: { type: String },
     cloudinaryId: { type: String },
