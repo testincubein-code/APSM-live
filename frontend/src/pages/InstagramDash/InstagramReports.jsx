@@ -1,107 +1,147 @@
-import React, { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Download, FileText, Filter } from 'lucide-react';
-import DateRangePicker from '@/components/DateRangePicker';
-import reportApi from '@/services/reportApi';
+// ── Instagram Reports Page ────────────────────────────────────────────
+// Professional empty state for report downloads and exports.
+// CSV/PDF export functionality is not yet implemented on the backend.
+// Shows a polished placeholder with upcoming feature descriptions.
 
-const InstagramReports = () => {
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Download,
+  FileText,
+  Calendar,
+  BarChart3,
+  FileSpreadsheet,
+  FilePieChart,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
+
+// ── Skeleton loading state ──────────────────────────────────────────
+function ReportsSkeleton() {
+  return (
+    <div className="space-y-6 animate-fade-in p-4 md:p-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="border-white/10 bg-[#161B22]/90 backdrop-blur-sm">
+            <CardContent className="p-5">
+              <Skeleton className="h-12 w-12 rounded-xl mb-3 bg-gray-700/50" />
+              <Skeleton className="h-4 w-3/4 mb-2 bg-gray-700/50" />
+              <Skeleton className="h-3 w-full bg-gray-700/50" />
+              <Skeleton className="h-3 w-2/3 mt-1 bg-gray-700/50" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Reports Component ──────────────────────────────────────────
+export default function InstagramReports() {
   const { isConnected } = useOutletContext();
-  const [isExportingPdf, setIsExportingPdf] = useState(false);
-  const [isExportingCsv, setIsExportingCsv] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const d = new Date();
-  d.setDate(d.getDate() - 30);
-  const defaultStart = d.toISOString().split('T')[0];
-  const defaultEnd = new Date().toISOString().split('T')[0];
-  const [dateRange, setDateRange] = useState({ start: defaultStart, end: defaultEnd });
-
-  const handleExport = async (format) => {
-    if (format === 'pdf') setIsExportingPdf(true);
-    if (format === 'csv') setIsExportingCsv(true);
-
-    try {
-      await reportApi.exportAnalytics('instagram', format, dateRange.start, dateRange.end);
-    } catch (error) {
-      console.error(`Failed to export ${format}:`, error);
-      alert(`Failed to export ${format.toUpperCase()}`);
-    } finally {
-      setIsExportingPdf(false);
-      setIsExportingCsv(false);
-    }
-  };
+  useEffect(() => {
+    // Simulate initial loading to show skeleton for effect
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!isConnected) {
     return (
       <div className="p-4 md:p-8 flex flex-col items-center justify-center min-h-[50vh]">
         <h2 className="text-xl text-white font-semibold mb-2">Account Disconnected</h2>
-        <p className="text-gray-400">Please connect your Instagram account to generate reports.</p>
+        <p className="text-gray-400">Please connect your Instagram account to access reports.</p>
       </div>
     );
   }
 
+  // ── Loading state ─────────────────────────────────────────────────
+  if (loading) return <ReportsSkeleton />;
+
+  // ── Report type preview cards ─────────────────────────────────────
+  const reportTypes = [
+    {
+      icon: FileSpreadsheet,
+      title: "CSV Export",
+      description: "Download raw analytics data as CSV files for custom analysis in spreadsheets.",
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      icon: FilePieChart,
+      title: "PDF Reports",
+      description: "Generate beautifully formatted PDF reports with charts and summaries.",
+      color: "text-pink-400",
+      bg: "bg-pink-500/10",
+    },
+    {
+      icon: Calendar,
+      title: "Date Range Filtering",
+      description: "Select custom date ranges to generate reports for specific time periods.",
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+    },
+    {
+      icon: BarChart3,
+      title: "Historical Reports",
+      description: "Access historical analytics snapshots and compare performance over time.",
+      color: "text-violet-400",
+      bg: "bg-violet-500/10",
+    },
+    {
+      icon: FileText,
+      title: "Scheduled Reports",
+      description: "Set up automated weekly or monthly report generation delivered to your inbox.",
+      color: "text-purple-400",
+      bg: "bg-purple-500/10",
+    },
+    {
+      icon: Download,
+      title: "Bulk Downloads",
+      description: "Download all analytics data for multiple platforms in a single archive.",
+      color: "text-cyan-400",
+      bg: "bg-cyan-500/10",
+    },
+  ];
+
   return (
-    <div className="p-4 md:p-8 space-y-8 w-full max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Export Reports</h1>
-          <p className="text-gray-400 mt-1">Download your Instagram analytics data</p>
+    <div className="space-y-8 animate-fade-in p-4 md:p-6 max-w-7xl mx-auto">
+      {/* ── Reports Hero Section ──────────────────────────────────────── */}
+      <div className="flex flex-col items-center justify-center text-center py-12">
+        {/* Icon */}
+        <div className="relative mb-6">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-pink-500/10 ring-1 ring-pink-500/20">
+            <Download className="h-10 w-10 text-pink-500" />
+          </div>
+          <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-pink-500/30 animate-pulse" />
         </div>
+        <h2 className="text-xl font-bold text-white">Reports & Exports</h2>
+        <p className="mt-2 text-sm text-gray-400 max-w-md leading-relaxed">
+          Report export functionality is currently initializing. You will soon be able to download detailed analytics
+          reports as CSV or PDF files, with custom date ranges and historical data.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl text-white font-semibold">Custom Report</CardTitle>
-            <p className="text-sm text-gray-400">Generate a comprehensive PDF or CSV report</p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-300 mb-1 block">Date Range</label>
-                <div className="flex items-center gap-2 p-1 border border-white/10 rounded-lg bg-black/20">
-                  <DateRangePicker 
-                    startDate={dateRange.start} 
-                    endDate={dateRange.end} 
-                    onChange={setDateRange} 
-                  />
-                </div>
+      {/* ── Report Type Preview Cards ─────────────────────────────────── */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {reportTypes.map((report) => (
+          <Card
+            key={report.title}
+            className="border-white/5 bg-[#161B22]/90 backdrop-blur-md shadow-none opacity-60 hover:opacity-100 transition-all duration-300 hover:border-white/10"
+          >
+            <CardContent className="p-5">
+              <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${report.bg} mb-4`}>
+                <report.icon className={`h-6 w-6 ${report.color}`} />
               </div>
-              
-              <div>
-                <label className="text-sm font-medium text-gray-300 mb-1 block">Metrics to Include</label>
-                <div className="flex items-center gap-2 p-2 border border-white/10 rounded-lg bg-black/20">
-                  <Filter className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-300">All Metrics</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button 
-                onClick={() => handleExport('pdf')}
-                disabled={isExportingPdf || isExportingCsv}
-                className="flex-1 bg-[#E1306C] hover:bg-[#E1306C]/90 text-white font-semibold shadow-lg shadow-[#E1306C]/20 transition-all active:scale-95"
-              >
-                {isExportingPdf ? 'Generating PDF...' : 'Export as PDF'}
-                {!isExportingPdf && <FileText className="w-4 h-4 ml-2" />}
-              </Button>
-              <Button 
-                onClick={() => handleExport('csv')}
-                disabled={isExportingPdf || isExportingCsv}
-                variant="outline"
-                className="flex-1 border-white/10 text-white hover:bg-white/10 font-semibold shadow-lg transition-all active:scale-95"
-              >
-                {isExportingCsv ? 'Generating CSV...' : 'Export CSV'}
-                {!isExportingCsv && <Download className="w-4 h-4 ml-2" />}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <h3 className="text-sm font-semibold text-white">{report.title}</h3>
+              <p className="mt-1.5 text-xs text-gray-400 leading-relaxed">
+                {report.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
-};
-
-export default InstagramReports;
+}

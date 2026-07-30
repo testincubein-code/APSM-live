@@ -12,6 +12,10 @@ import { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import fbapi from "@/services/fbapi";
 import ConnectCard from "@/components/ConnectCard";
+import DashboardHeader from "@/components/DashboardHeader";
+import DateRangePicker from "@/components/DateRangePicker";
+import { Facebook } from "@/components/icons/BrandIcons";
+import { Button } from "@/components/ui/button";
 import {
   BarChart3, Users, Heart, FileText,
   ThumbsUp, Eye, Video, History, Target, Settings, HelpCircle,
@@ -35,8 +39,8 @@ const FB_NAV_ITEMS = [
   { path: "/dashboard/facebook/stories", label: "Stories", icon: History },
   { path: "/dashboard/facebook/groups", label: "Groups", icon: Users },
   { path: "/dashboard/facebook/ads", label: "Ads", icon: Target },
-  { path: "/dashboard/facebook/reports", label: "Reports", icon: FileText },
   { path: "/dashboard/facebook/insights", label: "Insights", icon: BarChart3 },
+  { path: "/dashboard/facebook/reports", label: "Reports", icon: FileText },
 ];
 
 // ── Sidebar bottom-pinned items (Settings & Help — no profile block) ──────────
@@ -76,6 +80,10 @@ const FacebookLayout = () => {
   // ── Top-level identity/connection state — passed via Outlet context ────────
   const [profileData, setProfileData] = useState(null);
   const [isLayoutLoading, setIsLayoutLoading] = useState(true);
+  const [dateRange, setDateRange] = useState({
+    start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0]
+  });
 
   // ── Fetch ONLY profile/connection on mount ────────────────────────────────
   useEffect(() => {
@@ -279,6 +287,38 @@ const FacebookLayout = () => {
           <span className="ml-4 font-semibold text-white">Facebook Dashboard</span>
         </div>
 
+        {/* ── Page Header ──────────────────────────────────────────────── */}
+        <div className="sticky top-0 z-10 border-b border-white/10 bg-background/80 backdrop-blur-md px-6 py-3">
+          <div className="flex items-center justify-between">
+            <DashboardHeader
+              title="Facebook Analytics"
+              subtitle={profile?.name ? `Page: ${profile.name}` : "Facebook Analytics"}
+              icon={<Facebook className="h-5 w-5" />}
+              brandBgClass="bg-[#1877F2]/10"
+              brandTextClass="text-[#1877F2]"
+            />
+            {/* Header Actions */}
+            <div className="flex items-center gap-2">
+              <DateRangePicker 
+                startDate={dateRange.start} 
+                endDate={dateRange.end} 
+                onChange={setDateRange} 
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.reload()}
+                disabled={isLayoutLoading}
+                className="text-xs text-gray-400 border-white/10 bg-white/5 hover:bg-white/10 hover:text-white h-9 px-3"
+                id="fb-refresh-btn"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 mr-2 ${isLayoutLoading ? "animate-spin" : ""}`} />
+                Refresh Data
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* ── Scrollable Outlet Area ────────────────────────────────────── */}
         {/* Passes layout context to all child pages via Outlet context */}
         <main className="flex-1 overflow-y-auto relative z-10">
@@ -287,6 +327,7 @@ const FacebookLayout = () => {
               profile,
               isConnected,
               isLayoutLoading,
+              dateRange
             }}
           />
         </main>

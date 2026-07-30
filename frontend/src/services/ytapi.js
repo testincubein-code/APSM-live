@@ -214,6 +214,32 @@ export const parseRecentVideos = (snapshot) => {
     .filter(Boolean);
 };
 
+// ── Parse Playlists ─────────────────────────────────────────────────
+export const parsePlaylists = (snapshot) => {
+  const playlists = snapshot?.rawPlatformData?.playlists;
+  if (!playlists || !Array.isArray(playlists)) return [];
+
+  return playlists
+    .map((playlist) => {
+      if (!playlist) return null;
+      const snippet = playlist.snippet || {};
+      const contentDetails = playlist.contentDetails || {};
+
+      return {
+        id: playlist.id || "",
+        title: snippet.title || "Untitled Playlist",
+        description: snippet.description || "",
+        thumbnail:
+          snippet.thumbnails?.medium?.url ||
+          snippet.thumbnails?.default?.url ||
+          "",
+        publishedAt: snippet.publishedAt || "",
+        itemCount: parseInt(contentDetails.itemCount) || 0,
+      };
+    })
+    .filter(Boolean);
+};
+
 // ── Parse Country Data (for geographic charts) ──────────────────────
 // Extracts top countries with view counts from demographics or reports.
 export const parseCountryData = (snapshot) => {

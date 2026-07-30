@@ -1,185 +1,147 @@
-// ── Facebook Reports Page ─────────────────────────────────────────────────────
-// Fetches data independently via fbapi.getReportsData() on mount.
-// Provides date range + report type selectors, export buttons, and recent exports table.
+// ── Facebook Reports Page ────────────────────────────────────────────
+// Professional empty state for report downloads and exports.
+// CSV/PDF export functionality is not yet implemented on the backend.
+// Shows a polished placeholder with upcoming feature descriptions.
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Download,
+  FileText,
+  Calendar,
+  BarChart3,
+  FileSpreadsheet,
+  FilePieChart,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 
-import fbapi from "@/services/fbapi";
-import { FileText, Download, Calendar, TrendingDown } from "lucide-react";
-
-// ── Report type options ────────────────────────────────────────────────────────
-const REPORT_TYPES = [
-  "Overview Summary",
-  "Audience Report",
-  "Content Performance",
-  "Engagement Report",
-  "Ads Report",
-  "Custom",
-];
-
-const FacebookReports = () => {
-  const { isConnected } = useOutletContext();
-  const [data, setData]           = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError]         = useState(null);
-  // ── Local form state for generating a new report ──────────────────────────
-  const [reportType, setReportType] = useState(REPORT_TYPES[0]);
-  const [startDate, setStartDate]   = useState(() => {
-    const d = new Date(); d.setDate(d.getDate() - 30); return d.toISOString().split("T")[0];
-  });
-  const [endDate, setEndDate]       = useState(() => new Date().toISOString().split("T")[0]);
-
-  // ── Fetch reports data independently on mount ─────────────────────────────
-  useEffect(() => {
-    let mounted = true;
-    const fetch = async () => {
-      try {
-        const result = await fbapi.getReportsData();
-        if (mounted) setData(result);
-      } catch (e) {
-        if (mounted) setError("Could not load reports data.");
-      } finally {
-        if (mounted) setIsLoading(false);
-      }
-    };
-    fetch();
-    return () => { mounted = false; };
-  }, []);
-
-  if (error) return (
-    <div className="p-6 flex items-center justify-center min-h-[50vh]">
-      <div className="text-center space-y-3">
-        <TrendingDown className="h-10 w-10 text-red-400 mx-auto" />
-        <p className="text-sm text-gray-400">{error}</p>
-        <Button onClick={() => window.location.reload()} className="bg-[#1877F2] hover:bg-[#1877F2]/90 text-white text-xs">Retry</Button>
+// ── Skeleton loading state ──────────────────────────────────────────
+function ReportsSkeleton() {
+  return (
+    <div className="space-y-6 animate-fade-in p-4 md:p-6">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="border-white/10 bg-[#161B22]/90 backdrop-blur-sm">
+            <CardContent className="p-5">
+              <Skeleton className="h-12 w-12 rounded-xl mb-3 bg-gray-700/50" />
+              <Skeleton className="h-4 w-3/4 mb-2 bg-gray-700/50" />
+              <Skeleton className="h-3 w-full bg-gray-700/50" />
+              <Skeleton className="h-3 w-2/3 mt-1 bg-gray-700/50" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
+}
+
+// ── Main Reports Component ──────────────────────────────────────────
+export default function FacebookReports() {
+  const { isConnected } = useOutletContext();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial loading to show skeleton for effect
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isConnected) {
+    return (
+      <div className="p-4 md:p-8 flex flex-col items-center justify-center min-h-[50vh]">
+        <h2 className="text-xl text-white font-semibold mb-2">Account Disconnected</h2>
+        <p className="text-gray-400">Please connect your Facebook account to access reports.</p>
+      </div>
+    );
+  }
+
+  // ── Loading state ─────────────────────────────────────────────────
+  if (loading) return <ReportsSkeleton />;
+
+  // ── Report type preview cards ─────────────────────────────────────
+  const reportTypes = [
+    {
+      icon: FileSpreadsheet,
+      title: "CSV Export",
+      description: "Download raw analytics data as CSV files for custom analysis in spreadsheets.",
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      icon: FilePieChart,
+      title: "PDF Reports",
+      description: "Generate beautifully formatted PDF reports with charts and summaries.",
+      color: "text-blue-400",
+      bg: "bg-blue-500/10",
+    },
+    {
+      icon: Calendar,
+      title: "Date Range Filtering",
+      description: "Select custom date ranges to generate reports for specific time periods.",
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
+    },
+    {
+      icon: BarChart3,
+      title: "Historical Reports",
+      description: "Access historical analytics snapshots and compare performance over time.",
+      color: "text-violet-400",
+      bg: "bg-violet-500/10",
+    },
+    {
+      icon: FileText,
+      title: "Scheduled Reports",
+      description: "Set up automated weekly or monthly report generation delivered to your inbox.",
+      color: "text-red-400",
+      bg: "bg-red-500/10",
+    },
+    {
+      icon: Download,
+      title: "Bulk Downloads",
+      description: "Download all analytics data for multiple platforms in a single archive.",
+      color: "text-cyan-400",
+      bg: "bg-cyan-500/10",
+    },
+  ];
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
-
-      {/* ── Report Generator Card ──────────────────────────────────────────── */}
-      <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5">
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold text-white">Generate New Report</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* ── Report Type Selector ─────────────────────────────────── */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-gray-400 font-medium uppercase tracking-wider">Report Type</label>
-              <select
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-[#1877F2]/50 transition-colors"
-              >
-                {REPORT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-            {/* ── Start Date ───────────────────────────────────────────── */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-gray-400 font-medium uppercase tracking-wider">Start Date</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-[#1877F2]/50 transition-colors"
-              />
-            </div>
-            {/* ── End Date ─────────────────────────────────────────────── */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-gray-400 font-medium uppercase tracking-wider">End Date</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-[#1877F2]/50 transition-colors"
-              />
-            </div>
+    <div className="space-y-8 animate-fade-in p-4 md:p-6">
+      {/* ── Reports Hero Section ──────────────────────────────────────── */}
+      <div className="flex flex-col items-center justify-center text-center py-12">
+        {/* Icon */}
+        <div className="relative mb-6">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#1877F2]/10 ring-1 ring-[#1877F2]/20">
+            <Download className="h-10 w-10 text-[#1877F2]" />
           </div>
-          {/* ── Export Buttons ────────────────────────────────────────── */}
-          <div className="flex flex-wrap gap-3">
-            <Button className="bg-[#1877F2] hover:bg-[#1877F2]/90 text-white gap-2 text-sm" id="fb-export-csv-btn">
-              <Download className="h-4 w-4" />
-              Export as CSV
-            </Button>
-            <Button
-              variant="outline"
-              className="border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white gap-2 text-sm"
-              id="fb-export-pdf-btn"
-            >
-              <FileText className="h-4 w-4" />
-              Export as PDF
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          <div className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-[#1877F2]/30 animate-pulse" />
+        </div>
+        <h2 className="text-xl font-bold text-white">Reports & Exports</h2>
+        <p className="mt-2 text-sm text-gray-400 max-w-md leading-relaxed">
+          Report export functionality is currently initializing. You will soon be able to download detailed analytics
+          reports as CSV or PDF files, with custom date ranges and historical data.
+        </p>
+      </div>
 
-      {/* ── Recent Exports Table ───────────────────────────────────────────── */}
-      <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5">
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold text-white">Recent Exports</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          {isLoading ? (
-            <div className="space-y-3 p-6">
-              {[1,2,3].map(i => <Skeleton key={i} className="h-12 w-full bg-gray-700/30 rounded-lg" />)}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-500 uppercase tracking-wider border-y border-white/5 bg-white/[0.02]">
-                  <tr>
-                    <th className="px-6 py-4 font-medium">Report Name</th>
-                    <th className="px-6 py-4 font-medium">Date Range</th>
-                    <th className="px-6 py-4 font-medium">Type</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium">Generated</th>
-                    <th className="px-6 py-4 font-medium text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04]">
-                  {(!data?.recentExports?.length) ? (
-                    <tr><td colSpan={6} className="py-12 text-center text-gray-500 text-sm">No exports yet. Generate your first report above.</td></tr>
-                  ) : data.recentExports.map((exp, i) => (
-                    <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-6 py-4 text-xs font-medium text-gray-200 max-w-[200px] truncate">
-                        {exp.report}
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">
-                        {exp.startDate} – {exp.endDate}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full inline-block bg-[#1877F2]/10 text-[#1877F2]">
-                          {exp.type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-[10px] font-medium px-2 py-0.5 rounded-full inline-block bg-emerald-500/10 text-emerald-400">
-                          {exp.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-400 whitespace-nowrap">{exp.generatedAt}</td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="text-[10px] text-[#1877F2] hover:underline flex items-center gap-1 ml-auto">
-                          <Download className="h-3 w-3" /> Download
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* ── Report Type Preview Cards ─────────────────────────────────── */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {reportTypes.map((report) => (
+          <Card
+            key={report.title}
+            className="border-white/5 bg-[#161B22]/90 backdrop-blur-md shadow-none opacity-60 hover:opacity-100 transition-all duration-300 hover:border-white/10"
+          >
+            <CardContent className="p-5">
+              <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${report.bg} mb-4`}>
+                <report.icon className={`h-6 w-6 ${report.color}`} />
+              </div>
+              <h3 className="text-sm font-semibold text-white">{report.title}</h3>
+              <p className="mt-1.5 text-xs text-gray-400 leading-relaxed">
+                {report.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
-};
-
-export default FacebookReports;
+}

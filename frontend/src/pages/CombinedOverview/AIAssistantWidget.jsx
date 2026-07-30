@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, Sparkles, User, Loader2, AlertCircle } from 'lucide-react';
+import { Send, Bot, Sparkles, User, Loader2, AlertCircle, X } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import chatbotApi from '@/services/chatbotApi';
 
@@ -12,6 +12,7 @@ const SUGGESTIONS = [
 
 const AIAssistantWidget = () => {
   const { user } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -78,24 +79,45 @@ const AIAssistantWidget = () => {
   const firstName = user?.name?.split(' ')[0] || 'there';
 
   return (
-    <div className="flex flex-col h-full bg-[#0D1117] rounded-2xl border border-white/8 overflow-hidden shadow-2xl">
-      {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="shrink-0 px-4 py-3.5 border-b border-white/8 flex items-center gap-3 bg-white/[0.02]">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-          <Bot className="w-4 h-4 text-white" />
-        </div>
-        <div className="flex-1">
-          <h3 className="font-semibold text-white text-sm">AI Assistant</h3>
-          <p className="text-[11px] text-slate-500">Your intelligent analytics companion</p>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[10px] text-emerald-400 font-medium">Live</span>
-        </div>
-      </div>
+    <div 
+      className={`fixed z-50 bottom-6 right-6 transition-all duration-300 ease-in-out shadow-2xl ${
+        isCollapsed 
+          ? 'w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 cursor-pointer hover:scale-105 flex items-center justify-center' 
+          : 'w-[360px] h-[600px] flex flex-col bg-[#0D1117] rounded-2xl border border-white/10 overflow-hidden'
+      }`}
+      onClick={isCollapsed ? () => setIsCollapsed(false) : undefined}
+    >
+      {isCollapsed ? (
+        <Bot className="w-6 h-6 text-white" />
+      ) : (
+        <>
+          {/* ── Header ─────────────────────────────────────────────── */}
+          <div className="shrink-0 px-4 py-3.5 border-b border-white/8 flex items-center justify-between bg-white/[0.02]">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 shrink-0">
+                <Bot className="w-4 h-4 text-white shrink-0" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-white text-sm truncate">AI Assistant</h3>
+                <p className="text-[11px] text-slate-500 truncate">Your intelligent analytics companion</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 mr-2 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] text-emerald-400 font-medium">Live</span>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); setIsCollapsed(true); }}
+                className="text-gray-400 hover:text-white p-1.5 rounded-md hover:bg-white/10 transition-colors shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
 
-      {/* ── Messages ───────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin">
+          {/* ── Messages ───────────────────────────────────────────── */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin">
         {messages.length === 0 ? (
           /* Welcome screen */
           <div className="space-y-5 h-full flex flex-col justify-start pt-2">
@@ -228,6 +250,8 @@ const AIAssistantWidget = () => {
           AI responses may not always be accurate. Verify important insights.
         </p>
       </div>
+      </>
+      )}
     </div>
   );
 };

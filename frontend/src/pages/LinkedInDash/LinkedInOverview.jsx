@@ -3,6 +3,31 @@ import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, CartesianG
 import { Users, Search, Eye, MousePointerClick, TrendingUp, Link2, Share2, FileText, Globe } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 
+// ── Shared KpiCard Component ──────────────────────────────────────────
+function KpiCard({ title, value, showActive, icon: Icon }) {
+  return (
+    <Card className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors hover:bg-white/[0.01]">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-[#8B949E] text-[11px] font-semibold tracking-wider uppercase">
+          {title}
+        </span>
+        {Icon && <Icon className="w-4 h-4 text-[#8B949E]" />}
+      </div>
+      <div className="text-3xl font-bold text-white mb-2 tracking-tight">
+        {value}
+      </div>
+      {showActive ? (
+        <div className="flex items-center gap-1 text-xs font-medium text-[#10B981]">
+          <TrendingUp className="w-3.5 h-3.5" />
+          <span>Active</span>
+        </div>
+      ) : (
+        <div className="h-4" />
+      )}
+    </Card>
+  );
+}
+
 // Helper: Format large numbers to compact labels (e.g. 1.2K)
 const formatCompactNumber = (num) => {
   if (num === null || num === undefined) return "--";
@@ -80,50 +105,38 @@ export default function LinkedInOverview() {
     {
       label: "Total Impressions",
       value: formatCompactNumber(totalImpressions),
-      desc: "Total times content was displayed",
       icon: Eye,
-      color: "text-[#0A66C2]",
-      bg: "bg-[#0A66C2]/10"
+      showActive: true
     },
     {
       label: "Engagement Rate",
       value: `${calculatedEngagementRate}%`,
-      desc: "(Interactions / Impressions) * 100",
       icon: TrendingUp,
-      color: "text-[#0A66C2]",
-      bg: "bg-[#0A66C2]/10"
+      showActive: true
     },
     {
       label: "Net New Followers",
       value: `+${metrics.netNewFollowers || 0}`,
-      desc: "Organic & sponsored growth split",
       icon: Users,
-      color: "text-[#0A66C2]",
-      bg: "bg-[#0A66C2]/10"
+      showActive: true
     },
     {
       label: "Profile Views",
       value: formatCompactNumber(metrics.profileViews || rawData.profileViews || 0),
-      desc: "Active clicks into company profile",
       icon: MousePointerClick,
-      color: "text-[#0A66C2]",
-      bg: "bg-[#0A66C2]/10"
+      showActive: false
     },
     {
       label: "Search Appearances",
       value: formatCompactNumber(metrics.searchAppearances || rawData.searchAppearances || 0),
-      desc: "How often shown in search queries",
       icon: Search,
-      color: "text-[#0A66C2]",
-      bg: "bg-[#0A66C2]/10"
+      showActive: false
     },
     {
       label: "Total Connections",
       value: profileInfo.pageType === "Company" ? "Hidden" : formatCompactNumber(profileInfo.connections),
-      desc: "1st-degree professional network size",
       icon: Globe,
-      color: "text-[#0A66C2]",
-      bg: "bg-[#0A66C2]/10"
+      showActive: false
     }
   ];
 
@@ -168,28 +181,15 @@ export default function LinkedInOverview() {
       </Card>
 
       {/* ── Section B: 6-Column KPI Grid ─────────────────────────────── */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {kpiList.map((kpi, idx) => (
-          <Card key={idx} className="bg-[#161B22]/90 backdrop-blur-md border border-white/5 text-white hover:border-[#0A66C2]/30 transition-all duration-200 shadow-lg">
-            <CardContent className="p-4 flex flex-col justify-between h-full min-h-[140px]">
-              <div className="flex items-start justify-between">
-                <div className={`p-2.5 rounded-full ${kpi.bg}`}>
-                  <kpi.icon className={`h-4.5 w-4.5 ${kpi.color}`} />
-                </div>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold truncate" title={kpi.label}>
-                  {kpi.label}
-                </p>
-                <p className="text-2xl font-bold text-white mt-1">
-                  {kpi.value}
-                </p>
-                <p className="text-[9px] text-gray-500 mt-0.5 truncate" title={kpi.desc}>
-                  {kpi.desc}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <KpiCard 
+            key={idx} 
+            title={kpi.label} 
+            value={kpi.value} 
+            icon={kpi.icon} 
+            showActive={kpi.showActive} 
+          />
         ))}
       </div>
 

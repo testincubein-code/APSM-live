@@ -106,7 +106,10 @@ const MetricDetailView = () => {
               <Skeleton className="w-full h-full bg-gray-700/30 rounded-lg" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data.history} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                <AreaChart 
+                  data={(data?.history?.length > 0) ? data.history : [{ date: '', value: 0 }]} 
+                  margin={{ top: 20, right: 20, left: -20, bottom: 0 }}
+                >
                   <defs>
                     <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#E1306C" stopOpacity={0.4}/>
@@ -115,7 +118,15 @@ const MetricDetailView = () => {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                   <XAxis dataKey="date" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => formatNumber(value)} />
+                  <YAxis 
+                    stroke="#6b7280" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={(value) => formatNumber(value)} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
                   <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1, strokeDasharray: '4 4' }} />
                   <Area type="monotone" dataKey="value" stroke="#E1306C" strokeWidth={3} fillOpacity={1} fill="url(#colorMetric)" />
                 </AreaChart>

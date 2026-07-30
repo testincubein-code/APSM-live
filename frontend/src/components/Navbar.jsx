@@ -25,7 +25,7 @@ export default function Navbar({ title = "Dashboard" }) {
         </Link>
 
         {/* ── Theme Toggle ──────────────────────────────────────────────── */}
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
@@ -37,7 +37,7 @@ export default function Navbar({ title = "Dashboard" }) {
           ) : (
             <Moon className="h-4 w-4 transition-transform duration-300" />
           )}
-        </Button>
+        </Button> */}
       </div>
     </header>
   );

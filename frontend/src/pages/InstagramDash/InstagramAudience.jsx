@@ -18,15 +18,7 @@ const formatNumber = (num) => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div style={{
-        backgroundColor: 'rgba(22, 27, 34, 0.85)',
-        backdropFilter: 'blur(12px)',
-        borderColor: 'rgba(255,255,255,0.1)',
-        borderWidth: '1px',
-        color: '#fff',
-        borderRadius: '8px',
-        padding: '12px'
-      }}>
+      <div className="bg-[#161B22]/95 border border-white/10 backdrop-blur-md rounded-lg px-3 py-2 shadow-xl text-xs">
         {label && <p className="font-semibold text-gray-200 mb-2">{label}</p>}
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2 text-sm mb-1 last:mb-0">
@@ -148,12 +140,22 @@ const InstagramAudience = () => {
             </CardHeader>
             <CardContent className="h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.demographics.ageRange} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="age" stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={11} tickLine={false} axisLine={false} />
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                  <Bar dataKey="value" fill="#E1306C" radius={[4, 4, 0, 0]} name="Percentage" barSize={32} />
+                <BarChart 
+                  data={(data?.demographics?.ageRange?.length > 0) ? data.demographics.ageRange : [{ age: '', value: 0 }]} 
+                  margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+                >
+                  <CartesianGrid stroke="#ffffff10" strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="age" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} dy={8} />
+                  <YAxis 
+                    stroke="#64748b" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
+                  <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                  <Bar dataKey="value" fill="#E1306C" radius={[4, 4, 0, 0]} name="Percentage" maxBarSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>

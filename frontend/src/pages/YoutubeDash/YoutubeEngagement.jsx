@@ -54,7 +54,7 @@ const COLORS = {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-lg px-3 py-2 shadow-xl backdrop-blur-sm">
+    <div className="bg-[#161B22]/95 border border-white/10 backdrop-blur-md rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="mb-1 text-xs font-medium text-slate-400">{label}</p>
       {payload.map((entry, i) => (
         <p key={i} className="text-sm font-semibold" style={{ color: entry.color }}>
@@ -246,19 +246,19 @@ export default function YoutubeEngagement({ data, loading }) {
             {dailyData.length > 0 ? (
               <ResponsiveContainer width="100%" height={280}>
                 <LineChart data={dailyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                   <XAxis
                     dataKey="date"
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false} dy={8}
                     fontSize={10}
                     interval="preserveStartEnd"
                   />
-                  <YAxis stroke={"#94a3b8"} tickLine={false} axisLine={false} fontSize={10} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
-                  <Line type="monotone" dataKey="likes" name="Likes" stroke={COLORS.blue} strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="comments" name="Comments" stroke={COLORS.amber} strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="shares" name="Shares" stroke={COLORS.emerald} strokeWidth={2} dot={false} />
+                  <YAxis stroke="#64748b" tickLine={false} axisLine={false} fontSize={10} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ paddingTop: "12px", fontSize: "12px", color: "#94a3b8" }} />
+                  <Line type="monotone" dataKey="likes" name="Likes" stroke="#3B82F6" strokeWidth={2.5} activeDot={{ r: 6, strokeWidth: 0, fill: "#3B82F6" }} dot={false} />
+                  <Line type="monotone" dataKey="comments" name="Comments" stroke="#f59e0b" strokeWidth={2.5} activeDot={{ r: 6, strokeWidth: 0, fill: "#f59e0b" }} dot={false} />
+                  <Line type="monotone" dataKey="shares" name="Shares" stroke="#10B981" strokeWidth={2.5} activeDot={{ r: 6, strokeWidth: 0, fill: "#10B981" }} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
@@ -283,26 +283,27 @@ export default function YoutubeEngagement({ data, loading }) {
                 <AreaChart data={dailyData}>
                   <defs>
                     <linearGradient id="watchGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={COLORS.amber} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={COLORS.amber} stopOpacity={0} />
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                   <XAxis
                     dataKey="date"
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false} dy={8}
                     fontSize={10}
                     interval="preserveStartEnd"
                   />
-                  <YAxis stroke={"#94a3b8"} tickLine={false} axisLine={false} fontSize={10} />
-                  <Tooltip content={<CustomTooltip />} />
+                  <YAxis stroke="#64748b" tickLine={false} axisLine={false} fontSize={10} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
                   <Area
                     type="monotone"
                     dataKey="watchTime"
                     name="Watch Time (min)"
-                    stroke={COLORS.amber}
+                    stroke="#f59e0b"
                     fill="url(#watchGradient)"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
+                    activeDot={{ r: 6, strokeWidth: 0, fill: "#f59e0b" }}
                   />
                 </AreaChart>
               </ResponsiveContainer>

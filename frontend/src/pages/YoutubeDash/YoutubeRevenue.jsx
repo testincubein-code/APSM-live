@@ -33,7 +33,7 @@ function RevenueSkeleton() {
 }
 
 // ── Main Revenue Component ──────────────────────────────────────────
-export default function YoutubeRevenue({ loading }) {
+export default function YoutubeRevenue({ loading, data }) {
   // ── Loading state ─────────────────────────────────────────────────
   if (loading) return <RevenueSkeleton />;
 

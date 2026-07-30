@@ -54,7 +54,7 @@ const GENDER_COLORS = [COLORS.blue, COLORS.pink, COLORS.violet];
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-lg px-3 py-2 shadow-xl backdrop-blur-sm">
+    <div className="bg-[#161B22]/95 border border-white/10 backdrop-blur-md rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="mb-1 text-xs font-medium text-slate-400">{label}</p>
       {payload.map((entry, i) => (
         <p key={i} className="text-sm font-semibold" style={{ color: entry.color }}>
@@ -205,11 +205,19 @@ export default function YoutubeAudience({ data, loading }) {
             {ageData.length > 0 ? (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={ageData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
-                  <XAxis dataKey="group" stroke={"#94a3b8"} tickLine={false} axisLine={false} fontSize={11} />
-                  <YAxis stroke={"#94a3b8"} tickLine={false} axisLine={false} fontSize={10} tickFormatter={formatCompactNumber} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" name="Viewers" fill={COLORS.amber} radius={[4, 4, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                  <XAxis dataKey="group" stroke="#64748b" tickLine={false} axisLine={false} dy={8} fontSize={10} />
+                  <YAxis 
+                    stroke="#64748b" 
+                    tickLine={false} 
+                    axisLine={false} 
+                    fontSize={10} 
+                    tickFormatter={formatCompactNumber} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                  <Bar dataKey="count" name="Viewers" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (

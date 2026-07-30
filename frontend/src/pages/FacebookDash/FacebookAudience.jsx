@@ -98,10 +98,21 @@ const FacebookAudience = () => {
               <Skeleton className="w-full h-full bg-gray-700/30 rounded-xl" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data?.ageAndGender} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
+                <BarChart 
+                  data={(data?.ageAndGender?.length > 0) ? data.ageAndGender : [{ group: '', female: 0, male: 0 }]} 
+                  margin={{ top: 20, right: 20, left: -20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                   <XAxis dataKey="group" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(v) => `${v}%`} />
+                  <YAxis 
+                    stroke="#6b7280" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={(v) => `${v}%`} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
                   <Tooltip content={<GlassTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: 11, color: "#9ca3af" }} />
                   <Bar dataKey="female" name="Women" fill={FB_BLUE}   radius={[3, 3, 0, 0]} maxBarSize={16} />

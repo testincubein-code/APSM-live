@@ -35,6 +35,7 @@ const getAnalyticsSummary = async (req, res, next) => {
           incubationCenterId: userId,
           platform: platformName,
           snapshotDate: { $gte: oneDayAgo },
+          'rawPlatformData.mock': { $ne: true }
         }).sort({ snapshotDate: -1 });
 
         if (cached) {
@@ -64,8 +65,11 @@ const getAnalyticsSummary = async (req, res, next) => {
           `⚠️ [analytics.controller] Live ${platformName} fetch failed, returning latest snapshot:`,
           fetchErr.message
         );
-        const fallback = await AnalyticsSnapshot.findOne({ incubationCenterId: userId, platform: platformName })
-          .sort({ snapshotDate: -1 });
+        const fallback = await AnalyticsSnapshot.findOne({ 
+          incubationCenterId: userId, 
+          platform: platformName,
+          'rawPlatformData.mock': { $ne: true }
+        }).sort({ snapshotDate: -1 });
 
         if (!fallback) {
           throw new Error(

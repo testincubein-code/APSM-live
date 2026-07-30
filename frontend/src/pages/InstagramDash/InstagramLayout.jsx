@@ -8,10 +8,14 @@ import { Outlet, NavLink } from 'react-router-dom';
 import {
   Home, Grid, Users, Activity, Clock, PlaySquare,
   TrendingUp, Hash, BarChart, FileText, Settings, HelpCircle,
-  Menu, X, ChevronLeft, ChevronRight
+  Menu, X, ChevronLeft, ChevronRight, RefreshCw
 } from 'lucide-react';
 import igapi from '@/services/igapi';
 import ConnectCard from '@/components/ConnectCard';
+import DashboardHeader from '@/components/DashboardHeader';
+import DateRangePicker from '@/components/DateRangePicker';
+import { Instagram } from '@/components/icons/BrandIcons';
+import { Button } from '@/components/ui/button';
 
 // ── Navigation items (main) ──────────────────────────────────────────
 const navItems = [
@@ -62,6 +66,11 @@ const InstagramLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [dateRange, setDateRange] = useState({
+    start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0]
+  });
 
   // ── Fetch only top-level layout data (Connection State & Identity) ──
   useEffect(() => {
@@ -259,12 +268,45 @@ const InstagramLayout = () => {
           <span className="ml-4 font-semibold text-white">Instagram Dashboard</span>
         </div>
 
+        {/* ── Page Header ──────────────────────────────────────────────── */}
+        <div className="sticky top-0 z-10 border-b border-white/10 bg-background/80 backdrop-blur-md px-6 py-3">
+          <div className="flex items-center justify-between">
+            <DashboardHeader
+              title="Instagram Analytics"
+              subtitle={profileData?.profile?.name ? `Account: ${profileData.profile.name}` : "Instagram Analytics"}
+              icon={<Instagram className="h-5 w-5" />}
+              brandBgClass="bg-pink-500/10"
+              brandTextClass="text-pink-500"
+            />
+            {/* Header Actions */}
+            <div className="flex items-center gap-2">
+              <DateRangePicker 
+                startDate={dateRange.start} 
+                endDate={dateRange.end} 
+                onChange={setDateRange} 
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.reload()}
+                disabled={isLoading}
+                className="text-xs text-gray-400 border-white/10 bg-white/5 hover:bg-white/10 hover:text-white h-9 px-3"
+                id="ig-refresh-btn"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+                Refresh Data
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* ── Scrollable Content Area ────────────────────────────────── */}
         <main className="flex-1 overflow-y-auto relative z-10">
           <Outlet context={{
             profile: profileData?.profile,
             isConnected,
-            isLayoutLoading: isLoading
+            isLayoutLoading: isLoading,
+            dateRange
           }} />
         </main>
       </div>

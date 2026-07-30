@@ -73,7 +73,7 @@ const DEVICE_COLORS = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 backdrop-blur-lg px-3 py-2 shadow-xl backdrop-blur-sm">
+    <div className="bg-[#161B22]/95 border border-white/10 backdrop-blur-md rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="mb-1 text-xs font-medium text-slate-400">{label}</p>
       {payload.map((entry, i) => (
         <p key={i} className="text-sm font-semibold" style={{ color: entry.color }}>
@@ -155,25 +155,30 @@ function EmptyOverview() {
 
 // ── Reusable KPI Card ───────────────────────────────────────────────
 function KpiCard({ title, value, icon: Icon, trend }) {
-  const isPositive = trend === true; // YouTube uses boolean active state
   return (
-    <Card className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 p-4 hover:bg-white/[0.02] transition-colors group">
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider">{title}</span>
-        <Icon className="w-4 h-4 text-gray-500 group-hover:text-[#FF0000] group-hover:bg-[#FF0000]/20 rounded transition-all duration-300" />
+    <Card className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors hover:bg-white/[0.01]">
+      {/* Card Top Row: Uppercase Title & Slate Icon */}
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-[#8B949E] text-[11px] font-semibold tracking-wider uppercase">
+          {title}
+        </span>
+        {Icon && <Icon className="w-4 h-4 text-[#8B949E]" />}
       </div>
-      <div className="text-2xl font-bold text-white mb-2">{value}</div>
-      <div className="flex items-center gap-2">
-        {trend !== undefined && (
-          <div className={`flex items-center text-xs font-medium ${isPositive ? "text-emerald-400" : "text-slate-500"}`}>
-            {isPositive ? (
-              <><TrendingUp className="w-3 h-3 mr-1 text-emerald-400" /> Active</>
-            ) : (
-              <><TrendingDown className="w-3 h-3 mr-1 text-slate-500" /> No data</>
-            )}
-          </div>
-        )}
+
+      {/* Card Main Value */}
+      <div className="text-3xl font-bold text-white mb-2 tracking-tight">
+        {value}
       </div>
+
+      {/* Card Bottom Row: Optional Active Badge OR Empty Spacer */}
+      {trend ? (
+        <div className="flex items-center gap-1 text-xs font-medium text-[#10B981]">
+          <TrendingUp className="w-3.5 h-3.5" />
+          <span>Active</span>
+        </div>
+      ) : (
+        <div className="h-4" />
+      )}
     </Card>
   );
 }
@@ -341,30 +346,33 @@ export default function YoutubeOverview({ data, loading }) {
                 <AreaChart data={dailyData}>
                   <defs>
                     <linearGradient id="viewsGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={COLORS.red} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={COLORS.red} stopOpacity={0} />
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                   <XAxis
                     dataKey="date"
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
-                    fontSize={10}
+                    stroke="#64748b" tickLine={false} axisLine={false}
+                    fontSize={10} dy={8}
                     interval="preserveStartEnd"
                   />
                   <YAxis
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false}
                     fontSize={10}
                     tickFormatter={formatCompactNumber}
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
                   <Area
                     type="monotone"
                     dataKey="views"
                     name="Views"
-                    stroke={COLORS.red}
+                    stroke="#3B82F6"
                     fill="url(#viewsGradient)"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
+                    activeDot={{ r: 6, strokeWidth: 0, fill: "#3B82F6" }}
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -388,20 +396,23 @@ export default function YoutubeOverview({ data, loading }) {
             {subGrowth.length > 0 ? (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={subGrowth}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                   <XAxis
                     dataKey="date"
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false} dy={8}
                     fontSize={10}
                     interval="preserveStartEnd"
                   />
                   <YAxis
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false}
                     fontSize={10}
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
                   />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="gained" name="Gained" fill={COLORS.emerald} radius={[3, 3, 0, 0]} />
-                  <Bar dataKey="lost" name="Lost" fill={COLORS.red} radius={[3, 3, 0, 0]} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ paddingTop: "12px", fontSize: "12px", color: "#94a3b8" }} />
+                  <Bar dataKey="gained" name="Gained" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={20} />
+                  <Bar dataKey="lost" name="Lost" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -492,22 +503,22 @@ export default function YoutubeOverview({ data, loading }) {
             {countryData.length > 0 ? (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={countryData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={false} />
                   <XAxis
                     type="number"
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false}
                     fontSize={10}
                     tickFormatter={formatCompactNumber}
                   />
                   <YAxis
                     type="category"
                     dataKey="country"
-                    stroke={"#94a3b8"} tickLine={false} axisLine={false}
+                    stroke="#64748b" tickLine={false} axisLine={false}
                     fontSize={11}
                     width={40}
                   />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="views" name="Views" fill={COLORS.cyan} radius={[0, 4, 4, 0]} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                  <Bar dataKey="views" name="Views" fill="#06b6d4" radius={[0, 4, 4, 0]} maxBarSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -576,11 +587,19 @@ export default function YoutubeOverview({ data, loading }) {
               <CardContent>
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={ageData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={"#ffffff10"} vertical={false} />
-                    <XAxis dataKey="group" stroke={"#94a3b8"} tickLine={false} axisLine={false} fontSize={11} />
-                    <YAxis stroke={"#94a3b8"} tickLine={false} axisLine={false} fontSize={10} tickFormatter={formatCompactNumber} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="count" name="Viewers" fill={COLORS.amber} radius={[4, 4, 0, 0]} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                    <XAxis dataKey="group" stroke="#64748b" tickLine={false} axisLine={false} dy={8} fontSize={11} />
+                    <YAxis 
+                      stroke="#64748b" 
+                      tickLine={false} 
+                      axisLine={false} 
+                      fontSize={10} 
+                      tickFormatter={formatCompactNumber} 
+                      allowDecimals={false}
+                      domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                    />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                    <Bar dataKey="count" name="Viewers" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={20} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
