@@ -113,7 +113,7 @@ export default function MetaInnerSidebar({
         {isConnected && (
           <button
             onClick={() => setCollapsedByUser(!collapsedByUser)}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors shrink-0"
             title={collapsedByUser ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsedByUser

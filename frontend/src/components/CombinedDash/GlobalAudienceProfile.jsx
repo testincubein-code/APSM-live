@@ -16,7 +16,7 @@ const GlobalAudienceProfile = () => {
 
     const fetchAudience = async () => {
       // ── MOCK DATA TOGGLE ──────────────────────────────────────────────
-      const USE_MOCK_DATA = true;
+      const USE_MOCK_DATA = false;
 
       if (USE_MOCK_DATA) {
         if (mounted) {
@@ -61,10 +61,11 @@ const GlobalAudienceProfile = () => {
         if (isConnected('instagram')) {
           try {
             const igData = await igapi.getAudience?.(true);
-            if (igData?.demographics?.ageAndGender) {
-              igData.demographics.ageAndGender.forEach(d => {
-                const ageGroup = d.group.split('.')[1] || d.group;
-                ageBuckets[ageGroup] = (ageBuckets[ageGroup] || 0) + (d.count || 0);
+            if (igData?.demographics?.ageRange) {
+              igData.demographics.ageRange.forEach(d => {
+                const ageGroup = d.age;
+                // igapi returns percentages (or raw values normalized) in d.value, we'll just add it to the count for the visual chart
+                ageBuckets[ageGroup] = (ageBuckets[ageGroup] || 0) + (d.value || 0);
               });
             }
           } catch (e) { console.warn('IG Audience error', e); }

@@ -28,6 +28,8 @@ import {
   HelpCircle,
   Menu,
   X,
+  PanelLeft,
+  PanelLeftClose,
 } from "lucide-react";
 import {
   fetchYouTubeStatus,
@@ -54,7 +56,7 @@ const SUB_NAV_ITEMS = [
 
 const YT_NAV_BOTTOM = [
   { path: "/dashboard/youtube/settings", label: "Settings", icon: Settings },
-  { path: "/dashboard/youtube/help",     label: "Help",     icon: HelpCircle },
+  { path: "/dashboard/youtube/help", label: "Help", icon: HelpCircle },
 ];
 
 // ── Reusable Sidebar Link ─────────────────────────────────────────────────────
@@ -65,12 +67,10 @@ const SidebarLink = ({ to, icon: Icon, label, end, onClick, isCollapsed }) => {
       end={end}
       onClick={onClick}
       className={({ isActive }) =>
-        `flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-200 ${
-          isCollapsed ? 'justify-center' : ''
-        } ${
-          isActive 
-            ? 'bg-[#FF0000]/10 text-[#FF0000] shadow-sm' 
-            : 'text-gray-400 hover:text-white hover:bg-white/5'
+        `flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-200 ${isCollapsed ? 'justify-center' : ''
+        } ${isActive
+          ? 'bg-[#FF0000]/10 text-[#FF0000] shadow-sm'
+          : 'text-gray-400 hover:text-white hover:bg-white/5'
         }`
       }
       title={isCollapsed ? label : undefined}
@@ -173,7 +173,7 @@ export default function YoutubeLayout() {
   d.setDate(d.getDate() - 7);
   const defaultStart = d.toISOString().split('T')[0];
   const defaultEnd = new Date().toISOString().split('T')[0];
-  
+
   const [dateRange, setDateRange] = useState({ start: defaultStart, end: defaultEnd });
 
   const location = useLocation();
@@ -265,15 +265,15 @@ export default function YoutubeLayout() {
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none" />
         <div className="z-10 relative">
           <ConnectCard
-          icon={<Youtube className="h-8 w-8 text-[#FF0000]" />}
-          cardTitle="Connect YouTube Channel"
-          cardDescription="Connect your YouTube account to view sub counts, channel views, watch time, and detailed visual performance graphs."
-          onConnect={handleConnect}
-          buttonText="Connect YouTube Channel"
-          brandBgClass="bg-[#FF0000]/10"
-          brandTextClass="text-[#FF0000]"
-          brandButtonClass="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white font-semibold"
-        />
+            icon={<Youtube className="h-8 w-8 text-[#FF0000]" />}
+            cardTitle="Connect YouTube Channel"
+            cardDescription="Connect your YouTube account to view sub counts, channel views, watch time, and detailed visual performance graphs."
+            onConnect={handleConnect}
+            buttonText="Connect YouTube Channel"
+            brandBgClass="bg-[#FF0000]/10"
+            brandTextClass="text-[#FF0000]"
+            brandButtonClass="bg-[#FF0000] hover:bg-[#FF0000]/90 text-white font-semibold"
+          />
         </div>
       </div>
     );
@@ -286,7 +286,7 @@ export default function YoutubeLayout() {
       {/* ── Background Gradient Orbs ──────────────────────────────────── */}
       <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-violet-600/10 blur-3xl pointer-events-none z-0" />
       <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none z-0" />
-      
+
       {/* ── Mobile Backdrop ───────────────────────────────────────────────── */}
       {isMobileOpen && (
         <div
@@ -308,8 +308,8 @@ export default function YoutubeLayout() {
       >
         {/* ── Mobile Close Button ──────────────────────────────────── */}
         <div className="lg:hidden flex justify-end p-4 border-b border-white/5">
-          <button 
-            onClick={closeMobile} 
+          <button
+            onClick={closeMobile}
             className="text-gray-400 hover:text-[#FF0000] transition-colors"
           >
             <X className="w-6 h-6" />
@@ -317,8 +317,8 @@ export default function YoutubeLayout() {
         </div>
 
         {/* ── Brand Header ─────────────────────────────────────────────── */}
-        <div className={`border-b border-white/10 p-3 ${subNavCollapsed ? 'text-center' : ''}`}>
-          <div className="flex items-center gap-2">
+        <div className={`border-b border-white/10 p-3 h-16 flex items-center justify-between`}>
+          <div className={`flex items-center gap-2 overflow-hidden transition-opacity ${subNavCollapsed ? "opacity-0 w-0" : "opacity-100"}`}>
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FF0000]/10">
               <Youtube className="h-4 w-4 text-[#FF0000]" />
             </div>
@@ -338,30 +338,17 @@ export default function YoutubeLayout() {
               </p>
             </div>
           </div>
-        </div>
-
-        {/* ── Desktop Collapse Toggle ───────────────────────────────────── */}
-        <div className="hidden lg:block p-2 border-b border-white/10">
+          {/* Desktop Collapse Toggle Beside Branding */}
           <button
             onClick={() => setSubNavCollapsed(!subNavCollapsed)}
-            className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-200 ${
-              subNavCollapsed ? 'justify-center' : ''
-            }`}
+            className="hidden lg:flex p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors shrink-0"
             title={subNavCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-            id="yt-collapse-btn"
           >
-            {subNavCollapsed ? (
-              <ChevronRight className="h-4 w-4 shrink-0" />
-            ) : (
-              <>
-                <ChevronLeft className="h-4 w-4 shrink-0" />
-                <span>Collapse</span>
-              </>
-            )}
+            {subNavCollapsed ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* ── Navigation Links ──────────────────────────────────────── */}
+        {/* ── Desktop Collapse Toggle (Moved to bottom) ───────────────── */}
         <nav className="flex-1 py-2 px-1.5 space-y-0.5 overflow-y-auto">
           {SUB_NAV_ITEMS.map((item) => {
             const toPath = item.key === "overview" ? "/dashboard/youtube" : `/dashboard/youtube/${item.key}`;
@@ -378,7 +365,7 @@ export default function YoutubeLayout() {
             );
           })}
         </nav>
-        
+
         {/* ── Bottom-pinned Settings & Help (NO profile block) ──────────── */}
         <div className="py-2 px-1.5 border-t border-white/5 space-y-0.5 mt-auto">
           {YT_NAV_BOTTOM.map((item) => (
@@ -396,17 +383,17 @@ export default function YoutubeLayout() {
 
       {/* ── Main Content Area ────────────────────────────────────────── */}
       <div className="flex-1 min-w-0 overflow-y-auto relative">
-        <ConfirmDisconnectModal 
-          isOpen={showDisconnectModal} 
-          onClose={() => setShowDisconnectModal(false)} 
+        <ConfirmDisconnectModal
+          isOpen={showDisconnectModal}
+          onClose={() => setShowDisconnectModal(false)}
           onConfirm={() => {
             setShowDisconnectModal(false);
             executeRevoke();
-          }} 
+          }}
         />
         {/* ── Mobile Header Toggle ───────────────────────────────────── */}
         <div className="lg:hidden flex items-center p-4 border-b border-white/10 bg-background/80 backdrop-blur-md relative z-10">
-          <button 
+          <button
             onClick={() => setIsMobileOpen(true)}
             className="text-gray-400 hover:text-[#FF0000] transition-colors"
           >
@@ -427,10 +414,10 @@ export default function YoutubeLayout() {
             />
             {/* Header Actions */}
             <div className="flex items-center gap-2">
-              <DateRangePicker 
-                startDate={dateRange.start} 
-                endDate={dateRange.end} 
-                onChange={setDateRange} 
+              <DateRangePicker
+                startDate={dateRange.start}
+                endDate={dateRange.end}
+                onChange={setDateRange}
               />
               <Button
                 variant="outline"

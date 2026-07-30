@@ -45,7 +45,7 @@ const fmtDate = (val) => {
 // ── Data Fetching Logic ───────────────────────────────────────────────
 const fetchAllPlatformData = async (forceRefresh = false) => {
   // ── MOCK DATA TOGGLE ──────────────────────────────────────────────
-  const USE_MOCK_DATA = true; // User requested mock data
+  const USE_MOCK_DATA = false; // User requested mock data
 
   if (USE_MOCK_DATA) {
     const mockSummaries = {
@@ -54,7 +54,7 @@ const fetchAllPlatformData = async (forceRefresh = false) => {
       linkedin: { followers: 5600, reach: 18000, impressions: 32000, engagement: 1800, posts: 8, engagementRate: 10.0 },
       youtube: { followers: 42000, reach: 150000, impressions: 210000, engagement: 22000, posts: 5, engagementRate: 14.66 },
     };
-    
+
     const mockTotals = { followers: 0, reach: 0, impressions: 0, engagement: 0, posts: 0 };
     Object.values(mockSummaries).forEach(s => {
       mockTotals.followers += s.followers;

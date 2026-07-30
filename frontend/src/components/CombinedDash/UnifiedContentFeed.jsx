@@ -15,19 +15,19 @@ const UnifiedContentFeed = () => {
 
   useEffect(() => {
     let mounted = true;
-    
+
     const fetchFeed = async () => {
       // ── MOCK DATA TOGGLE ──────────────────────────────────────────────
-      const USE_MOCK_DATA = true;
+      const USE_MOCK_DATA = false;
 
       if (USE_MOCK_DATA) {
         if (mounted) {
           setFeed([
-            { id: 'm1', platform: 'instagram', title: 'Behind the scenes at our new office! 🏢✨', thumbnail: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=300&q=80', engagement: 12500, date: new Date().toISOString(), link: '#' },
-            { id: 'm2', platform: 'youtube', title: 'Top 10 Marketing Strategies for 2026', thumbnail: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=300&q=80', engagement: 9800, date: new Date(Date.now() - 86400000).toISOString(), link: '#' },
-            { id: 'm3', platform: 'linkedin', title: 'We are thrilled to announce our Series B funding!', thumbnail: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=300&q=80', engagement: 4200, date: new Date(Date.now() - 86400000 * 2).toISOString(), link: '#' },
-            { id: 'm4', platform: 'facebook', title: 'Join us live this Friday for a Q&A session.', thumbnail: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=300&q=80', engagement: 3100, date: new Date(Date.now() - 86400000 * 3).toISOString(), link: '#' },
-            { id: 'm5', platform: 'instagram', title: 'Product update: Dark mode is finally here 🌙', thumbnail: 'https://images.unsplash.com/photo-1555421689-491a97ff2040?auto=format&fit=crop&w=300&q=80', engagement: 8900, date: new Date(Date.now() - 86400000 * 4).toISOString(), link: '#' },
+            { id: '1', platform: 'instagram', title: 'Summer Collection Drop', thumbnail: 'https://placehold.co/150', engagement: 14500, date: new Date().toISOString(), link: '#' },
+            { id: '2', platform: 'youtube', title: 'Behind the Scenes VLOG', thumbnail: 'https://placehold.co/150', engagement: 12000, date: new Date().toISOString(), link: '#' },
+            { id: '3', platform: 'facebook', title: 'Huge Giveaway Announcement!', thumbnail: 'https://placehold.co/150', engagement: 8400, date: new Date().toISOString(), link: '#' },
+            { id: '4', platform: 'linkedin', title: 'Q3 Business Highlights', thumbnail: 'https://placehold.co/150', engagement: 3200, date: new Date().toISOString(), link: '#' },
+            { id: '5', platform: 'instagram', title: 'Team Retreat 2026', thumbnail: 'https://placehold.co/150', engagement: 2100, date: new Date().toISOString(), link: '#' },
           ]);
           setIsLoading(false);
         }
@@ -67,16 +67,16 @@ const UnifiedContentFeed = () => {
         // Fetch Instagram Posts
         if (isConnected('instagram')) {
           try {
-            const igData = await igapi.getEngagementMetrics?.();
-            if (igData?.tables?.topPosts) {
-              igData.tables.topPosts.forEach(p => {
+            const igData = await igapi.getContent?.();
+            if (igData?.posts) {
+              igData.posts.forEach(p => {
                 allPosts.push({
                   id: p.id,
                   platform: 'instagram',
                   title: p.caption || 'Instagram Post',
                   thumbnail: p.media_url || p.thumbnail || 'https://placehold.co/150',
-                  engagement: p.engagements || p.engagement || 0,
-                  date: p.date || p.timestamp,
+                  engagement: p.engagement || (p.like_count || 0) + (p.comments_count || 0),
+                  date: p.timestamp,
                   link: p.permalink || `https://instagram.com/p/${p.id}`,
                 });
               });
@@ -125,7 +125,7 @@ const UnifiedContentFeed = () => {
 
         // Sort by engagement and take top 6
         const sorted = allPosts.sort((a, b) => b.engagement - a.engagement).slice(0, 6);
-        
+
         if (mounted) {
           setFeed(sorted);
           setIsLoading(false);
