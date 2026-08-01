@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Create Axios client — uses relative paths so requests route through Vite proxy in dev
+// Create Axios client — uses VITE_BASE_URL environment variable for production (Vercel)
 const api = axios.create({
-  baseURL: '',
+  baseURL: import.meta.env.VITE_BASE_URL || '',
   headers: {
     'Content-Type': 'application/json',
   },
