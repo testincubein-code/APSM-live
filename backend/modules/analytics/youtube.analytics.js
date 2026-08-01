@@ -11,6 +11,7 @@ export const fetchAndSaveYouTubeAnalytics = async (userId) => {
   let countryReport = null;
   let deviceReport = null;
   let ageGenderReport = null;
+  let playlists = [];
 
   try {
     // 1. Get valid access token
@@ -64,6 +65,22 @@ export const fetchAndSaveYouTubeAnalytics = async (userId) => {
       } catch (err) {
         console.error(`⚠️ [youtube.analytics] Failed to fetch recent video details:`, err.message);
       }
+    }
+
+    // 3b. Fetch playlists
+    try {
+      console.log(`[youtube.analytics] Fetching playlists for user ${userId}...`);
+      const playlistsResponse = await axios.get('https://www.googleapis.com/youtube/v3/playlists', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: {
+          part: 'snippet,contentDetails',
+          mine: true,
+          maxResults: 50
+        }
+      });
+      playlists = playlistsResponse.data.items || [];
+    } catch (err) {
+      console.error(`⚠️ [youtube.analytics] Failed to fetch playlists:`, err.message);
     }
 
     // 4. Fetch YouTube Analytics reports (last 30 days)
@@ -192,6 +209,7 @@ export const fetchAndSaveYouTubeAnalytics = async (userId) => {
     const rawPlatformData = {
       channelDetails: channel,
       recentVideos,
+      playlists,
       analyticsReports: {
         daily: dailyReport,
         country: countryReport,
@@ -235,60 +253,6 @@ export const fetchAndSaveYouTubeAnalytics = async (userId) => {
     console.log(`✅ [youtube.analytics] Full YouTube data saved for user ${userId}`);
     return snapshot;
   } else {
-    // FALLBACK: If no accounts connected or API calls fail completely, generate mock YouTube analytics
-    console.warn(`[youtube.analytics] No valid YouTube connection found. Generating mock YouTube snapshot for user ${userId}...`);
-
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const snapshot = await AnalyticsSnapshot.findOneAndUpdate(
-      {
-        incubationCenterId: userId,
-        platform: 'youtube',
-        snapshotDate: { $gte: startOfDay, $lte: endOfDay }
-      },
-      {
-        incubationCenterId: userId,
-        platform: 'youtube',
-        snapshotDate: new Date(),
-        metrics: {
-          followers: Math.floor(Math.random() * 5000) + 1000,
-          impressions: Math.floor(Math.random() * 15000) + 5000,
-          reach: Math.floor(Math.random() * 12000) + 4000,
-          profileViews: 0,
-          totalEngagement: Math.floor(Math.random() * 1500) + 200
-        },
-        demographics: {
-          topCountries: [
-            { name: 'IN', count: Math.floor(Math.random() * 5000) + 2000 },
-            { name: 'US', count: Math.floor(Math.random() * 2000) + 500 },
-            { name: 'GB', count: Math.floor(Math.random() * 1000) + 200 }
-          ],
-          topCities: [],
-          ageAndGender: [
-            { group: '18-24_male', count: Math.floor(Math.random() * 3000) + 1000 },
-            { group: '25-34_female', count: Math.floor(Math.random() * 4000) + 1500 },
-            { group: '35-44_male', count: Math.floor(Math.random() * 1500) + 500 }
-          ]
-        },
-        ads: {
-          activeCampaigns: 0,
-          totalSpend: 0,
-          currency: 'INR',
-          adImpressions: 0,
-          costPerClick: 0
-        },
-        rawPlatformData: {
-          mock: true,
-          channelDetails: { snippet: { title: 'Mock Incubation Channel' } }
-        }
-      },
-      { upsert: true, new: true }
-    );
-
-    console.log(`✅ [youtube.analytics] Mock YouTube data saved successfully for user ${userId}`);
-    return snapshot;
+    throw new Error('Failed to fetch valid YouTube data or no YouTube account connected.');
   }
 };

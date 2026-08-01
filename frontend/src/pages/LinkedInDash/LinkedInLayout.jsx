@@ -232,8 +232,8 @@ export default function LinkedInLayout() {
         </div>
 
         {/* Brand Header */}
-        <div className={`border-b border-white/10 p-3 ${isCollapsed ? 'text-center' : ''}`}>
-          <div className="flex items-center gap-2">
+        <div className={`border-b border-white/10 p-3 h-16 flex items-center justify-between`}>
+          <div className={`flex items-center gap-2 overflow-hidden transition-opacity ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}>
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#0A66C2]/10">
               <Linkedin className="h-4 w-4 text-[#0A66C2]" />
             </div>
@@ -252,27 +252,17 @@ export default function LinkedInLayout() {
               </p>
             </div>
           </div>
-        </div>
-
-        {/* Desktop Collapse Toggle */}
-        <div className="hidden lg:block p-2 border-b border-white/10">
+          {/* Desktop Collapse Toggle Beside Branding */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-200 ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
+            className="hidden lg:flex p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors shrink-0"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 shrink-0" />
-            ) : (
-              <>
-                <ChevronLeft className="h-4 w-4 shrink-0" />
-                <span>Collapse</span>
-              </>
-            )}
+            {isCollapsed ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
           </button>
         </div>
+
+        {/* Desktop Collapse Toggle (moved to bottom) */}
 
         {/* Navigation Links */}
         <nav className="flex-1 py-2 px-1.5 space-y-0.5 overflow-y-auto">

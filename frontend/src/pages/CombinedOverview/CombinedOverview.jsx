@@ -17,54 +17,13 @@ import linkedinApi from '@/services/linkedinApi';
 import fbapi from '@/services/fbapi';
 import AIAssistantWidget from './AIAssistantWidget';
 import DateRangePicker from '@/components/DateRangePicker';
+import CrossPlatformHeatmap from '@/components/CombinedDash/CrossPlatformHeatmap';
+import UnifiedContentFeed from '@/components/CombinedDash/UnifiedContentFeed';
+import ShareOfVoiceChart from '@/components/CombinedDash/ShareOfVoiceChart';
+import GoalTracker from '@/components/CombinedDash/GoalTracker';
+import GlobalAudienceProfile from '@/components/CombinedDash/GlobalAudienceProfile';
 
-// ── Platform Config ───────────────────────────────────────────────────
-const PLATFORM_CONFIG = {
-  youtube: {
-    color: '#FF0000',
-    label: 'YouTube',
-    icon: () => (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="#FF0000">
-        <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.5 12 20.5 12 20.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/>
-      </svg>
-    ),
-  },
-  linkedin: {
-    color: '#0A66C2',
-    label: 'LinkedIn',
-    icon: () => (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="#0A66C2">
-        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.03-1.85-3.03-1.85 0-2.13 1.44-2.13 2.93v5.67H9.37V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.99 0 1.78-.77 1.78-1.73V1.73C24 .77 23.21 0 22.22 0z"/>
-      </svg>
-    ),
-  },
-  facebook: {
-    color: '#1877F2',
-    label: 'Facebook',
-    icon: () => (
-      <svg viewBox="0 0 24 24" className="w-full h-full" fill="#1877F2">
-        <path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.49 0-1.95.93-1.95 1.88v2.27h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/>
-      </svg>
-    ),
-  },
-  instagram: {
-    color: '#E1306C',
-    label: 'Instagram',
-    icon: () => (
-      <svg viewBox="0 0 24 24" className="w-full h-full">
-        <defs>
-          <linearGradient id="igGradCombined" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#feda75"/>
-            <stop offset="30%" stopColor="#fa7e1e"/>
-            <stop offset="60%" stopColor="#d62976"/>
-            <stop offset="100%" stopColor="#962fbf"/>
-          </linearGradient>
-        </defs>
-        <path fill="url(#igGradCombined)" d="M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85 0 3.2-.01 3.58-.07 4.85-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07-3.2 0-3.58-.01-4.85-.07-3.26-.15-4.77-1.7-4.92-4.92C2.17 15.58 2.16 15.2 2.16 12c0-3.2.01-3.58.07-4.85C2.38 3.86 3.9 2.31 7.15 2.23 8.42 2.17 8.8 2.16 12 2.16zm0-2.16C8.74 0 8.33.01 7.05.07 2.7.27.27 2.7.07 7.05.01 8.33 0 8.74 0 12c0 3.26.01 3.67.07 4.95.2 4.36 2.62 6.78 6.98 6.98C8.33 23.99 8.74 24 12 24c3.26 0 3.67-.01 4.95-.07 4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95 0-3.26-.01-3.67-.07-4.95-.2-4.35-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32A6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/>
-      </svg>
-    ),
-  },
-};
+import { PLATFORM_CONFIG } from './config';
 
 // ── Helpers ───────────────────────────────────────────────────────────
 const fmt = (num) => {
@@ -84,8 +43,47 @@ const fmtDate = (val) => {
 };
 
 // ── Data Fetching Logic ───────────────────────────────────────────────
-// Fetches each platform individually (same as each dashboard does), then aggregates.
 const fetchAllPlatformData = async (forceRefresh = false) => {
+  // ── MOCK DATA TOGGLE ──────────────────────────────────────────────
+  const USE_MOCK_DATA = false; // User requested mock data
+
+  if (USE_MOCK_DATA) {
+    const mockSummaries = {
+      facebook: { followers: 12500, reach: 45000, impressions: 85000, engagement: 3200, posts: 12, engagementRate: 7.11 },
+      instagram: { followers: 28400, reach: 98000, impressions: 150000, engagement: 15400, posts: 24, engagementRate: 15.71 },
+      linkedin: { followers: 5600, reach: 18000, impressions: 32000, engagement: 1800, posts: 8, engagementRate: 10.0 },
+      youtube: { followers: 42000, reach: 150000, impressions: 210000, engagement: 22000, posts: 5, engagementRate: 14.66 },
+    };
+
+    const mockTotals = { followers: 0, reach: 0, impressions: 0, engagement: 0, posts: 0 };
+    Object.values(mockSummaries).forEach(s => {
+      mockTotals.followers += s.followers;
+      mockTotals.reach += s.reach;
+      mockTotals.impressions += s.impressions;
+      mockTotals.engagement += s.engagement;
+      mockTotals.posts += s.posts;
+    });
+    mockTotals.engagementRate = ((mockTotals.engagement / mockTotals.reach) * 100).toFixed(2);
+
+    const mockTimeline = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      return {
+        date: d.toISOString().split('T')[0],
+        facebookReach: Math.floor(5000 + Math.random() * 2000),
+        facebookEngagement: Math.floor(300 + Math.random() * 200),
+        instagramReach: Math.floor(12000 + Math.random() * 3000),
+        instagramEngagement: Math.floor(2000 + Math.random() * 500),
+        linkedinReach: Math.floor(2000 + Math.random() * 1000),
+        linkedinEngagement: Math.floor(200 + Math.random() * 100),
+        youtubeReach: Math.floor(20000 + Math.random() * 5000),
+        youtubeEngagement: Math.floor(3000 + Math.random() * 1000),
+      };
+    });
+
+    return { summaries: mockSummaries, totals: mockTotals, timeline: mockTimeline };
+  }
+
   // 1. Get auth status to know which platforms are connected
   const authRes = await api.get('/auth/status');
   const statusArr = authRes.data?.status ?? [];
@@ -242,22 +240,30 @@ const fetchAllPlatformData = async (forceRefresh = false) => {
 };
 
 // ── Sub-Components ────────────────────────────────────────────────────
-const MetricCard = ({ title, value, icon: Icon, color = '#6366f1', suffix = '' }) => (
-  <Card className="bg-[#0D1117] border border-white/8 rounded-xl hover:border-white/15 transition-colors">
-    <CardContent className="p-4">
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-xs font-medium text-slate-500 leading-tight">{title}</p>
-        <div className="p-1.5 rounded-lg shrink-0" style={{ background: `${color}18` }}>
-          <Icon className="w-3.5 h-3.5" style={{ color }} />
-        </div>
+const MetricCard = ({ title, value, icon: Icon, showActive, suffix = '' }) => (
+  <Card className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors hover:bg-white/[0.01]">
+    {/* Card Top Row: Uppercase Title & Slate Icon */}
+    <div className="flex justify-between items-center mb-2">
+      <span className="text-[#8B949E] text-[11px] font-semibold tracking-wider uppercase">
+        {title}
+      </span>
+      {Icon && <Icon className="w-4 h-4 text-[#8B949E]" />}
+    </div>
+
+    {/* Card Main Value */}
+    <div className="text-3xl font-bold text-white mb-2 tracking-tight">
+      {value !== undefined && value !== null ? fmt(value) : '—'}{suffix}
+    </div>
+
+    {/* Card Bottom Row: Optional Active Badge OR Empty Spacer */}
+    {showActive ? (
+      <div className="flex items-center gap-1 text-xs font-medium text-[#10B981]">
+        <TrendingUp className="w-3.5 h-3.5" />
+        <span>Active</span>
       </div>
-      <p className="text-xl font-bold text-white tracking-tight truncate">
-        {value !== undefined && value !== null ? fmt(value) : '—'}{suffix}
-      </p>
-      <div className="flex items-center gap-1 mt-1.5">
-        <span className="text-[10px] text-slate-600">across all platforms</span>
-      </div>
-    </CardContent>
+    ) : (
+      <div className="h-4" />
+    )}
   </Card>
 );
 
@@ -365,17 +371,12 @@ const CombinedOverview = () => {
     return (
       <div className="p-6 lg:p-8 w-full max-w-[1600px] mx-auto space-y-6">
         <Skeleton className="h-10 w-64 bg-white/5 rounded-xl" />
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-12 lg:col-span-4 xl:col-span-3">
-            <Skeleton className="h-[560px] w-full bg-white/5 rounded-2xl" />
-          </div>
-          <div className="col-span-12 lg:col-span-8 xl:col-span-9">
-            <Skeleton className="h-5 w-40 bg-white/5 rounded mb-3" />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-24 bg-white/5 rounded-xl" />
-              ))}
-            </div>
+        <div className="w-full">
+          <Skeleton className="h-5 w-40 bg-white/5 rounded mb-3" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 bg-white/5 rounded-xl" />
+            ))}
           </div>
         </div>
       </div>
@@ -419,43 +420,39 @@ const CombinedOverview = () => {
 
       <div className="flex flex-col gap-6">
 
-        {/* ── ROW 1: AI Chat + KPI Cards ─────────────────────────────── */}
-        <div className="grid grid-cols-12 gap-6 items-start">
-
-          {/* AI Assistant (fixed height on left) */}
-          <div className="col-span-12 lg:col-span-4 xl:col-span-3">
-            <div className="h-[560px]"><AIAssistantWidget /></div>
-          </div>
-
-          {/* KPI Cards (right) */}
-          <div className="col-span-12 lg:col-span-8 xl:col-span-9">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-              Combined Analytics Overview
-            </p>
-            {!hasData ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-white/10 rounded-2xl">
-                <WifiOff className="w-12 h-12 text-slate-700 mb-4" />
-                <h3 className="text-white font-semibold mb-1">No Platforms Connected</h3>
-                <p className="text-sm text-slate-500 max-w-xs">
-                  Connect at least one social media account to see your combined analytics here.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <MetricCard title="Total Followers" value={totals.followers} icon={Users} color="#6366f1" />
-                <MetricCard title="Total Reach" value={totals.reach} icon={Eye} color="#0ea5e9" />
-                <MetricCard title="Total Impressions" value={totals.impressions} icon={Activity} color="#a855f7" />
-                <MetricCard title="Total Engagement" value={totals.engagement} icon={Heart} color="#ec4899" />
-                <MetricCard title="Posts" value={totals.posts} icon={FileText} color="#f59e0b" />
-                <MetricCard title="YouTube Views" value={summaries.youtube?.reach} icon={Eye} color="#FF0000" />
-                <MetricCard title="IG Reach" value={summaries.instagram?.reach} icon={Users} color="#E1306C" />
-                <MetricCard title="Engagement Rate" value={totals.engagementRate} icon={TrendingUp} color="#22d3ee" suffix="%" />
-              </div>
-            )}
-          </div>
+        {/* ── ROW 1: KPI Cards ─────────────────────────────── */}
+        <div className="w-full">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            Combined Analytics Overview
+          </p>
+          {!hasData ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-white/10 rounded-2xl">
+              <WifiOff className="w-12 h-12 text-slate-700 mb-4" />
+              <h3 className="text-white font-semibold mb-1">No Platforms Connected</h3>
+              <p className="text-sm text-slate-500 max-w-xs">
+                Connect at least one social media account to see your combined analytics here.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <MetricCard title="Total Followers" value={totals.followers} icon={Users} showActive={true} />
+              <MetricCard title="Total Reach" value={totals.reach} icon={Eye} showActive={true} />
+              <MetricCard title="Total Impressions" value={totals.impressions} icon={Activity} showActive={true} />
+              <MetricCard title="Total Engagement" value={totals.engagement} icon={Heart} showActive={true} />
+              <MetricCard title="Posts" value={totals.posts} icon={FileText} showActive={false} />
+              <MetricCard title="YouTube Views" value={summaries.youtube?.reach} icon={Eye} showActive={true} />
+              <MetricCard title="IG Reach" value={summaries.instagram?.reach} icon={Users} showActive={true} />
+              <MetricCard title="Engagement Rate" value={totals.engagementRate} icon={TrendingUp} showActive={true} suffix="%" />
+            </div>
+          )}
         </div>
 
-        {/* ── ROW 2: Charts ──────────────────────────────────────────── */}
+        {/* ── ROW 2: Cross Platform Heatmap ──────────────────────────────────────────── */}
+        {hasData && (
+          <CrossPlatformHeatmap summaries={summaries} />
+        )}
+
+        {/* ── ROW 3: Charts ──────────────────────────────────────────── */}
         {hasData && timeline.length > 0 && (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
@@ -509,7 +506,23 @@ const CombinedOverview = () => {
           </div>
         )}
 
-        {/* ── ROW 3: Platform Breakdown ───────────────────────────────── */}
+        {/* ── ROW 4: Advanced Visualizations ───────────────────────────────── */}
+        {hasData && (
+          <div className="grid grid-cols-12 gap-6">
+            <GoalTracker summaries={summaries} />
+            <ShareOfVoiceChart summaries={summaries} />
+          </div>
+        )}
+
+        {/* ── ROW 5: Content & Audience ───────────────────────────────── */}
+        <div className="grid grid-cols-12 gap-6">
+          <UnifiedContentFeed />
+          <div className="col-span-12 lg:col-span-6 flex">
+            <GlobalAudienceProfile />
+          </div>
+        </div>
+
+        {/* ── ROW 6: Platform Breakdown ───────────────────────────────── */}
         {hasData && (
           <div>
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Platform Breakdown</p>
@@ -522,6 +535,9 @@ const CombinedOverview = () => {
         )}
 
       </div>
+
+      {/* Floating AI Assistant */}
+      <AIAssistantWidget />
     </div>
   );
 };

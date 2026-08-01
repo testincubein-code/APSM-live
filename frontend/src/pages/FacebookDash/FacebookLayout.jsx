@@ -12,11 +12,17 @@ import { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import fbapi from "@/services/fbapi";
 import ConnectCard from "@/components/ConnectCard";
+import DashboardHeader from "@/components/DashboardHeader";
+import DateRangePicker from "@/components/DateRangePicker";
+import { Facebook } from "@/components/icons/BrandIcons";
+import { Button } from "@/components/ui/button";
 import {
   BarChart3, Users, Heart, FileText,
   ThumbsUp, Eye, Video, History, Target, Settings, HelpCircle,
   ChevronLeft, ChevronRight, Menu, X, RefreshCw, LogOut,
   PlaySquare, TrendingUp,
+  PanelLeft,
+  PanelLeftClose,
 } from "lucide-react";
 
 // ── Facebook brand color ──────────────────────────────────────────────────────
@@ -35,8 +41,8 @@ const FB_NAV_ITEMS = [
   { path: "/dashboard/facebook/stories", label: "Stories", icon: History },
   { path: "/dashboard/facebook/groups", label: "Groups", icon: Users },
   { path: "/dashboard/facebook/ads", label: "Ads", icon: Target },
-  { path: "/dashboard/facebook/reports", label: "Reports", icon: FileText },
   { path: "/dashboard/facebook/insights", label: "Insights", icon: BarChart3 },
+  { path: "/dashboard/facebook/reports", label: "Reports", icon: FileText },
 ];
 
 // ── Sidebar bottom-pinned items (Settings & Help — no profile block) ──────────
@@ -76,6 +82,10 @@ const FacebookLayout = () => {
   // ── Top-level identity/connection state — passed via Outlet context ────────
   const [profileData, setProfileData] = useState(null);
   const [isLayoutLoading, setIsLayoutLoading] = useState(true);
+  const [dateRange, setDateRange] = useState({
+    start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0]
+  });
 
   // ── Fetch ONLY profile/connection on mount ────────────────────────────────
   useEffect(() => {
@@ -188,8 +198,8 @@ const FacebookLayout = () => {
         </div>
 
         {/* ── Brand Header ─────────────────────────────────────────────── */}
-        <div className={`border-b border-white/10 p-3 ${isCollapsed ? 'text-center' : ''}`}>
-          <div className="flex items-center gap-2">
+        <div className={`border-b border-white/10 p-3 h-16 flex items-center justify-between`}>
+          <div className={`flex items-center gap-2 overflow-hidden transition-opacity ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}>
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#1877F2]/10">
               <svg className="h-4 w-4 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -211,27 +221,17 @@ const FacebookLayout = () => {
               </p>
             </div>
           </div>
-        </div>
-
-        {/* ── Desktop Collapse Toggle ───────────────────────────────────── */}
-        <div className="hidden lg:block p-2 border-b border-white/10">
+          {/* Desktop Collapse Toggle Beside Branding */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium text-gray-400 hover:bg-white/10 hover:text-white transition-all duration-200 ${isCollapsed ? 'justify-center' : ''
-              }`}
+            className="hidden lg:flex p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors shrink-0"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-            id="fb-collapse-btn"
           >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 shrink-0" />
-            ) : (
-              <>
-                <ChevronLeft className="h-4 w-4 shrink-0" />
-                <span>Collapse</span>
-              </>
-            )}
+            {isCollapsed ? <PanelLeft className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
           </button>
         </div>
+
+
 
         {/* ── Main Navigation Links ─────────────────────────────────────── */}
         <nav className="flex-1 py-2 px-1.5 space-y-0.5 overflow-y-auto">
@@ -279,6 +279,38 @@ const FacebookLayout = () => {
           <span className="ml-4 font-semibold text-white">Facebook Dashboard</span>
         </div>
 
+        {/* ── Page Header ──────────────────────────────────────────────── */}
+        <div className="sticky top-0 z-10 border-b border-white/10 bg-background/80 backdrop-blur-md px-6 py-3">
+          <div className="flex items-center justify-between">
+            <DashboardHeader
+              title="Facebook Analytics"
+              subtitle={profile?.name ? `Page: ${profile.name}` : "Facebook Analytics"}
+              icon={<Facebook className="h-5 w-5" />}
+              brandBgClass="bg-[#1877F2]/10"
+              brandTextClass="text-[#1877F2]"
+            />
+            {/* Header Actions */}
+            <div className="flex items-center gap-2">
+              <DateRangePicker 
+                startDate={dateRange.start} 
+                endDate={dateRange.end} 
+                onChange={setDateRange} 
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.location.reload()}
+                disabled={isLayoutLoading}
+                className="text-xs text-gray-400 border-white/10 bg-white/5 hover:bg-white/10 hover:text-white h-9 px-3"
+                id="fb-refresh-btn"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 mr-2 ${isLayoutLoading ? "animate-spin" : ""}`} />
+                Refresh Data
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* ── Scrollable Outlet Area ────────────────────────────────────── */}
         {/* Passes layout context to all child pages via Outlet context */}
         <main className="flex-1 overflow-y-auto relative z-10">
@@ -287,6 +319,7 @@ const FacebookLayout = () => {
               profile,
               isConnected,
               isLayoutLoading,
+              dateRange
             }}
           />
         </main>

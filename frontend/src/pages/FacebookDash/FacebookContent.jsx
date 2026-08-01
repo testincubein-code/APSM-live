@@ -8,6 +8,7 @@ import { useOutletContext } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import fbapi from "@/services/fbapi";
+import { KpiCard } from "./MetaSharedComponents";
 import { FileText, MoreVertical, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -77,18 +78,22 @@ const FacebookContent = () => {
       {/* ── KPI Summary ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {kpis.map((k, i) => (
-          <Card key={i} className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 p-5">
-            <CardContent className="p-0">
-              {isLoading ? (
-                <><Skeleton className="h-3 w-20 bg-gray-700/50 mb-2" /><Skeleton className="h-7 w-16 bg-gray-700/50" /></>
-              ) : (
-                <>
-                  <p className="text-xs uppercase tracking-wider text-gray-400 font-semibold">{k.label}</p>
-                  <p className="text-2xl font-bold text-white mt-2">{k.value}</p>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          isLoading ? (
+            <Card key={i} className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <Skeleton className="h-3 w-20 bg-gray-700/50" />
+              </div>
+              <Skeleton className="h-7 w-24 bg-gray-700/50 mt-1" />
+              <Skeleton className="h-4 w-16 bg-gray-700/50 mt-2" />
+            </Card>
+          ) : (
+            <KpiCard 
+              key={i} 
+              title={k.label} 
+              value={k.value} 
+              showActive={false} 
+            />
+          )
         ))}
       </div>
 

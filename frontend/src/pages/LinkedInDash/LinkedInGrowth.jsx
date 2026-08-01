@@ -1,7 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
-import { Users, TrendingUp, Compass, Award } from "lucide-react";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
+import { Users, TrendingUp } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
+
+// ── Shared KpiCard Component ──────────────────────────────────────────
+function KpiCard({ title, value, showActive, icon: Icon }) {
+  return (
+    <Card className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors hover:bg-white/[0.01]">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-[#8B949E] text-[11px] font-semibold tracking-wider uppercase">
+          {title}
+        </span>
+        {Icon && <Icon className="w-4 h-4 text-[#8B949E]" />}
+      </div>
+      <div className="text-3xl font-bold text-white mb-2 tracking-tight">
+        {value}
+      </div>
+      {showActive ? (
+        <div className="flex items-center gap-1 text-xs font-medium text-[#10B981]">
+          <TrendingUp className="w-3.5 h-3.5" />
+          <span>Active</span>
+        </div>
+      ) : (
+        <div className="h-4" />
+      )}
+    </Card>
+  );
+}
 
 // Helper: Format large numbers to compact labels (e.g. 1.2K)
 const formatCompactNumber = (num) => {
@@ -61,21 +86,16 @@ export default function LinkedInGrowth() {
       {/* ── Section A: Highlights Grid ───────────────────────────────── */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
         {[
-          { title: "Current Followers", value: formatCompactNumber(currentFollowers), desc: "Total audience size", icon: Users, color: "text-[#0A66C2]", bg: "bg-[#0A66C2]/10" },
-          { title: "Net Growth", value: `+${formatCompactNumber(totalNetGrowth)}`, desc: "New followers in this period", icon: TrendingUp, color: "text-emerald-400", bg: "bg-emerald-500/10" }
+          { title: "Current Followers", value: formatCompactNumber(currentFollowers), icon: Users, showActive: true },
+          { title: "Net Growth", value: `+${formatCompactNumber(totalNetGrowth)}`, icon: TrendingUp, showActive: true }
         ].map((kpi, idx) => (
-          <Card key={idx} className="bg-[#161B22]/90 backdrop-blur-md border border-white/5 text-white shadow-lg">
-            <CardContent className="p-6 flex items-center justify-between">
-              <div>
-                <p className="text-xs uppercase tracking-wider text-gray-400 font-semibold">{kpi.title}</p>
-                <p className="text-3xl font-bold text-white mt-2">{kpi.value}</p>
-                <p className="text-[10px] text-gray-500 mt-1">{kpi.desc}</p>
-              </div>
-              <div className={`p-3.5 rounded-full ${kpi.bg} ${kpi.color}`}>
-                <kpi.icon className="h-6 w-6" />
-              </div>
-            </CardContent>
-          </Card>
+          <KpiCard 
+            key={idx}
+            title={kpi.title}
+            value={kpi.value}
+            icon={kpi.icon}
+            showActive={kpi.showActive}
+          />
         ))}
       </div>
 

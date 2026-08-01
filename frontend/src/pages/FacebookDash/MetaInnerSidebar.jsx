@@ -35,8 +35,8 @@ export const FB_NAV = [
   { id: "stories",     label: "Stories",      icon: History     },
   { id: "groups",      label: "Groups",       icon: Users       },
   { id: "ads",         label: "Ads",          icon: Target      },
-  { id: "reports",     label: "Reports",      icon: FileText    },
   { id: "insights",    label: "Insights",     icon: BarChart3   },
+  { id: "reports",     label: "Reports",      icon: FileText    },
   { id: "settings",    label: "Settings",     icon: Settings    },
   { id: "help",        label: "Help",         icon: HelpCircle  },
 ];
@@ -113,7 +113,7 @@ export default function MetaInnerSidebar({
         {isConnected && (
           <button
             onClick={() => setCollapsedByUser(!collapsedByUser)}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors shrink-0"
             title={collapsedByUser ? "Expand sidebar" : "Collapse sidebar"}
           >
             {collapsedByUser

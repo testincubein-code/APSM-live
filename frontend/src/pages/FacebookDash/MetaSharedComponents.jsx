@@ -85,27 +85,31 @@ export function ConnectPrompt({ onConnect, platform, icon: Icon }) {
 
 // ── Scaffolded Facebook Child Components ────────────────────────────────
 
-export function KpiCard({ label, value, change, changeLabel, icon: Icon, color }) {
-  const pos = change >= 0;
+export function KpiCard({ title, value, showActive, icon: Icon }) {
   return (
-    <Card className="bg-[#161B22] border-white/5 text-white hover:border-white/10 transition-colors">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-4">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${color}`}>
-            <Icon className="h-5 w-5" />
-          </div>
-          <p className="text-sm font-medium text-slate-400">{label}</p>
+    <Card className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors hover:bg-white/[0.01]">
+      {/* Card Top Row: Uppercase Title & Slate Icon */}
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-[#8B949E] text-[11px] font-semibold tracking-wider uppercase">
+          {title}
+        </span>
+        {Icon && <Icon className="w-4 h-4 text-[#8B949E]" />}
+      </div>
+
+      {/* Card Main Value */}
+      <div className="text-3xl font-bold text-white mb-2 tracking-tight">
+        {value}
+      </div>
+
+      {/* Card Bottom Row: Optional Active Badge OR Empty Spacer */}
+      {showActive ? (
+        <div className="flex items-center gap-1 text-xs font-medium text-[#10B981]">
+          <TrendingUp className="w-3.5 h-3.5" />
+          <span>Active</span>
         </div>
-        <div>
-          <p className="text-2xl font-bold">{value}</p>
-          <div className="flex items-center gap-1 mt-1">
-            {pos ? <TrendingUp className="h-3 w-3 text-emerald-400" /> : <TrendingDown className="h-3 w-3 text-red-400" />}
-            <span className={`text-xs font-medium ${pos ? "text-emerald-400" : "text-red-400"}`}>
-              {pos ? "+" : ""}{change}% <span className="text-slate-500 font-normal">{changeLabel}</span>
-            </span>
-          </div>
-        </div>
-      </CardContent>
+      ) : (
+        <div className="h-4" />
+      )}
     </Card>
   );
 }
@@ -135,12 +139,12 @@ export function FacebookDataTable({ data, title, icon: Icon, kpis = [] }) {
       {kpis.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {kpis.map((k, i) => (
-            <Card key={i} className="bg-[#161B22] border-white/5 text-white">
-              <CardContent className="p-4">
-                <p className="text-xs font-medium text-slate-400 mb-1">{k.label}</p>
-                <p className="text-xl font-bold text-slate-100">{k.value}</p>
-              </CardContent>
-            </Card>
+            <KpiCard 
+              key={i} 
+              title={k.label} 
+              value={k.value} 
+              showActive={false} 
+            />
           ))}
         </div>
       )}
@@ -242,12 +246,12 @@ export function InstagramDataTable({ data, title, icon: Icon, kpis = [] }) {
       {kpis.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {kpis.map((k, i) => (
-            <Card key={i} className="bg-[#161B22] border-white/5 text-white">
-              <CardContent className="p-4">
-                <p className="text-xs font-medium text-slate-400 mb-1">{k.label}</p>
-                <p className="text-xl font-bold text-slate-100">{k.value}</p>
-              </CardContent>
-            </Card>
+            <KpiCard 
+              key={i} 
+              title={k.label} 
+              value={k.value} 
+              showActive={false} 
+            />
           ))}
         </div>
       )}

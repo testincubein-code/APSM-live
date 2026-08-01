@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import fbapi from "@/services/fbapi";
+import { KpiCard } from "./MetaSharedComponents";
 import { Eye, Target, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
@@ -20,7 +21,7 @@ const fmt = (n) => n == null ? "—" : new Intl.NumberFormat("en-US", { notation
 const GlassTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ backgroundColor: "rgba(22,27,34,0.85)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8 }} className="px-3 py-2.5 text-xs">
+    <div className="bg-[#161B22]/95 border border-white/10 backdrop-blur-md rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="font-semibold text-white mb-1">{label}</p>
       {payload.map((e, i) => <p key={i} style={{ color: e.color }}>{e.name}: <span className="font-bold text-white">{fmt(e.value)}</span></p>)}
     </div>
@@ -61,9 +62,9 @@ const FacebookReachViews = () => {
   );
 
   const kpis = [
-    { label: "Total Reach",    value: data?.kpis?.totalReach?.value,   change: data?.kpis?.totalReach?.change,   icon: Eye,       color: "bg-[#1877F2]/10 text-[#1877F2]"   },
-    { label: "Organic Reach",  value: data?.kpis?.organicReach?.value, change: data?.kpis?.organicReach?.change, icon: TrendingUp,color: "bg-emerald-500/10 text-emerald-400" },
-    { label: "Video Views",    value: data?.kpis?.videoViews?.value,   change: data?.kpis?.videoViews?.change,   icon: Target,    color: "bg-indigo-500/10 text-indigo-400"  },
+    { label: "Total Reach",    value: data?.kpis?.totalReach?.value,   icon: Eye        },
+    { label: "Organic Reach",  value: data?.kpis?.organicReach?.value, icon: TrendingUp },
+    { label: "Video Views",    value: data?.kpis?.videoViews?.value,   icon: Target     },
   ];
 
   return (
@@ -72,26 +73,24 @@ const FacebookReachViews = () => {
       {/* ── KPI Cards ─────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {kpis.map((k, i) => (
-          <Card key={i} className="bg-[#161B22]/90 backdrop-blur-md rounded-xl border border-white/5 p-5">
-            <CardContent className="p-0">
-              {isLoading ? (
-                <><Skeleton className="h-10 w-10 rounded-full bg-gray-700/50 mb-3" /><Skeleton className="h-3 w-20 bg-gray-700/50 mb-2" /><Skeleton className="h-8 w-24 bg-gray-700/50" /></>
-              ) : (
-                <>
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${k.color} mb-3`}>
-                    <k.icon className="h-5 w-5" />
-                  </div>
-                  <p className="text-xs uppercase tracking-wider text-gray-400 font-semibold">{k.label}</p>
-                  <p className="text-3xl font-bold text-white mt-2">{fmt(k.value)}</p>
-                  <div className={`text-xs font-medium flex items-center gap-0.5 mt-1 ${(k.change||0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                    {(k.change||0) >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                    {(k.change||0) >= 0 ? "+" : ""}{k.change}%
-                    <span className="text-gray-500 font-normal ml-1">vs prev period</span>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          isLoading ? (
+            <Card key={i} className="bg-[#10141D] border border-white/[0.06] rounded-xl p-5 shadow-none transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <Skeleton className="h-3 w-20 bg-gray-700/50" />
+                <Skeleton className="h-7 w-7 rounded-md bg-gray-700/50" />
+              </div>
+              <Skeleton className="h-7 w-24 bg-gray-700/50 mt-1" />
+              <Skeleton className="h-4 w-16 bg-gray-700/50 mt-2" />
+            </Card>
+          ) : (
+            <KpiCard 
+              key={i} 
+              title={k.label} 
+              value={fmt(k.value)} 
+              icon={k.icon} 
+              showActive={true} 
+            />
+          )
         ))}
       </div>
 
@@ -107,14 +106,25 @@ const FacebookReachViews = () => {
               <Skeleton className="w-full h-full bg-gray-700/30 rounded-xl" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data?.timeline} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmt} />
+                <BarChart 
+                  data={(data?.timeline?.length > 0) ? data.timeline : [{ date: '', organicReach: 0, paidReach: 0 }]} 
+                  margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
+                >
+                  <CartesianGrid stroke="#ffffff10" strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="date" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} dy={8} />
+                  <YAxis 
+                    stroke="#64748b" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={fmt} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
                   <Tooltip content={<GlassTooltip />} cursor={{ fill: "rgba(255,255,255,0.03)" }} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: 11, color: "#9ca3af" }} />
-                  <Bar dataKey="organicReach" name="Organic" stackId="a" fill={FB_BLUE}   radius={[0,0,0,0]} maxBarSize={20} />
-                  <Bar dataKey="paidReach"    name="Paid"    stackId="a" fill="#8b5cf6"   radius={[4,4,0,0]} maxBarSize={20} />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ paddingTop: "12px", fontSize: "12px", color: "#94a3b8" }} />
+                  <Bar dataKey="organicReach" name="Organic" stackId="a" fill="#3B82F6"   radius={[0,0,0,0]} maxBarSize={20} />
+                  <Bar dataKey="paidReach"    name="Paid"    stackId="a" fill="#8B5CF6"   radius={[4,4,0,0]} maxBarSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -131,24 +141,35 @@ const FacebookReachViews = () => {
               <Skeleton className="w-full h-full bg-gray-700/30 rounded-xl" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data?.timeline} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <AreaChart 
+                  data={(data?.timeline?.length > 0) ? data.timeline : [{ date: '', threeSecondViews: 0, oneMinuteViews: 0 }]} 
+                  margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
+                >
                   <defs>
                     <linearGradient id="fb3sGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor={FB_BLUE}  stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={FB_BLUE}  stopOpacity={0}   />
+                      <stop offset="5%"  stopColor="#3B82F6"  stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3B82F6"  stopOpacity={0}   />
                     </linearGradient>
                     <linearGradient id="fb1mGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#10b981" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}   />
+                      <stop offset="5%"  stopColor="#10B981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10B981" stopOpacity={0}   />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                  <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmt} />
+                  <CartesianGrid stroke="#ffffff10" strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="date" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} dy={8} />
+                  <YAxis 
+                    stroke="#64748b" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={fmt} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
                   <Tooltip content={<GlassTooltip />} />
-                  <Legend iconType="circle" wrapperStyle={{ fontSize: 11, color: "#9ca3af" }} />
-                  <Area type="monotone" dataKey="threeSecondViews" name="3s Views"    stroke={FB_BLUE}  strokeWidth={2} fillOpacity={1} fill="url(#fb3sGrad)" />
-                  <Area type="monotone" dataKey="oneMinuteViews"   name="1-Min Views" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#fb1mGrad)" />
+                  <Legend iconType="circle" iconSize={8} wrapperStyle={{ paddingTop: "12px", fontSize: "12px", color: "#94a3b8" }} />
+                  <Area type="monotone" dataKey="threeSecondViews" name="3s Views"    stroke="#3B82F6" strokeWidth={2.5} activeDot={{ r: 6, strokeWidth: 0, fill: "#3B82F6" }} fillOpacity={1} fill="url(#fb3sGrad)" />
+                  <Area type="monotone" dataKey="oneMinuteViews"   name="1-Min Views" stroke="#10B981" strokeWidth={2.5} activeDot={{ r: 6, strokeWidth: 0, fill: "#10B981" }} fillOpacity={1} fill="url(#fb1mGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             )}

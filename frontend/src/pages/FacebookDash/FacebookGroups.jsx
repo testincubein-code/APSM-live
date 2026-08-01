@@ -3,12 +3,12 @@
 // Shows 3 KPI cards, member growth LineChart, and recent posts list.
 
 import { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import fbapi from "@/services/fbapi";
-import { Users, Activity, FileText, ThumbsUp, MessageCircle, TrendingDown, ArrowUpRight } from "lucide-react";
+import { Users, Activity, FileText, ThumbsUp, MessageCircle, TrendingDown, ArrowUpRight, Share2 } from "lucide-react";
 import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from "recharts";
@@ -28,9 +28,11 @@ const GlassTooltip = ({ active, payload, label }) => {
 
 const FacebookGroups = () => {
   const { isConnected } = useOutletContext();
+  const navigate = useNavigate();
   const [data, setData]     = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError]   = useState(null);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   // ── Fetch groups metrics independently on mount ───────────────────────────
   useEffect(() => {
@@ -64,6 +66,52 @@ const FacebookGroups = () => {
     { label: "Active Members", value: fmt(data?.kpis?.activeMembers), icon: Activity, color: "bg-emerald-500/10 text-emerald-400" },
     { label: "Posts This Week",value: data?.kpis?.postsCount,         icon: FileText, color: "bg-amber-500/10 text-amber-400"    },
   ];
+
+  if (!isLoading && (!data || !data.kpis || data.kpis.totalMembers === 0)) {
+    return (
+      <div className="p-4 md:p-6 flex items-center justify-center min-h-[60vh] animate-fade-in">
+        <div className="bg-[#10141D] border border-white/[0.06] rounded-xl p-10 text-center w-full max-w-2xl shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1877F2]/10 border border-[#1877F2]/20">
+            <Users className="h-8 w-8 text-[#1877F2]" />
+          </div>
+          <h2 className="text-base font-bold text-white mb-2">No Facebook Group Connected</h2>
+          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed mb-6">
+            To track member growth, active engagement, and recent group posts, connect a Facebook Group where your Page has Admin access.
+          </p>
+          <div className="flex flex-col items-center justify-center">
+            <button 
+              onClick={() => navigate('/dashboard/settings')}
+              className="bg-[#1877F2] hover:bg-[#1877F2]/90 text-white text-xs font-semibold px-4 py-2.5 rounded-lg flex items-center gap-2 mx-auto transition-colors"
+            >
+              Connect Facebook Group
+            </button>
+            <button 
+              onClick={() => setIsGuideOpen(true)}
+              className="text-xs text-slate-400 hover:text-white transition-colors underline cursor-pointer mt-3 block"
+            >
+              View Setup Guide
+            </button>
+          </div>
+        </div>
+
+        {isGuideOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-[#161B22] border border-white/10 rounded-xl p-6 w-full max-w-md shadow-2xl text-left animate-fade-in">
+              <h2 className="text-lg font-bold text-white mb-2">Group Setup Guide</h2>
+              <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+                To track member growth and engagement, ensure you are an Admin of both your Facebook Page and the Facebook Group, and that they are officially linked together in your Facebook settings.
+              </p>
+              <div className="flex justify-end">
+                <Button onClick={() => setIsGuideOpen(false)} className="bg-[#1877F2] text-white hover:bg-[#1877F2]/90 h-8 px-4 text-xs font-semibold">
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -101,10 +149,21 @@ const FacebookGroups = () => {
               <Skeleton className="w-full h-full bg-gray-700/30 rounded-xl" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data?.growthTimeline} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <LineChart 
+                  data={(data?.growthTimeline?.length > 0) ? data.growthTimeline : [{ date: '', totalMembers: 0, activeMembers: 0 }]} 
+                  margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                   <XAxis dataKey="date" stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={10} tickLine={false} axisLine={false} tickFormatter={fmt} />
+                  <YAxis 
+                    stroke="#6b7280" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false} 
+                    tickFormatter={fmt} 
+                    allowDecimals={false}
+                    domain={([dataMin, dataMax]) => [0, isNaN(dataMax) || !isFinite(dataMax) || dataMax === 0 ? 2 : Math.ceil(dataMax * 1.2)]}
+                  />
                   <Tooltip content={<GlassTooltip />} />
                   <Legend iconType="circle" wrapperStyle={{ fontSize: 11, color: "#9ca3af" }} />
                   <Line type="monotone" dataKey="totalMembers"  name="Total"  stroke={FB_BLUE}  strokeWidth={2} dot={{ r: 3 }} activeDot={{ r: 5 }} />

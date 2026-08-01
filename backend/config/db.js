@@ -1,6 +1,7 @@
 // config/db.js
 import mongoose from 'mongoose';
 
+// ── Database Connection ──────────────────────────────────────────────
 const connectDB = async () => {
   if (!process.env.MONGODB_URI) {
     console.error('Error: MONGODB_URI environment variable is not defined.');
